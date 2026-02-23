@@ -24,6 +24,9 @@
       "react-app/jest"
     ]
   },
+  "overrides": {
+    "cross-spawn": "^7.0.6"
+  },
   "browserslist": {
     "production": [
       ">0.2%",

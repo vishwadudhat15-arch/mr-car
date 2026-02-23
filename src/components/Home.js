@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import bgImage from '../images.jpeg';
 
-const UI_SCALE = Math.min(1.5, window.innerWidth / 1920);
+// UI_SCALE removed (unused)
 
 // LANGUAGE TRANSLATIONS
 const translations = {
@@ -1230,7 +1230,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         earnedCoins: 0,
         keys: {},
         roadOffset: 0,
-        roadOffset: 0,
         touchStartX: null,
         touchStartY: null, // Track Y for speed control
         touchDirection: null,
@@ -1812,7 +1811,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
             // Draw Stars and Moon for Night and City maps
             if (mapType === 'night' || mapType === 'city') {
-                const time = Date.now() * 0.0001;
+                // time variable removed (unused)
                 for (let i = 0; i < 50; i++) {
                     const sx = ((Math.sin(i * 133.7) + 1) / 2) * W;
                     const sy = ((Math.cos(i * 77.3) + 1) / 2) * H * 0.4;
@@ -2271,6 +2270,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 cancelAnimationFrame(rafRef.current);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [screen, mapType, viewAngle, setCoins, W, H, t, canvasSize.w, canvasSize.h, isMobile]);
 
 
