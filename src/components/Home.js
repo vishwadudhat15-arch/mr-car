@@ -41,6 +41,9 @@ const translations = {
         maxSpeed: "Max Speed",
         controls: "CONTROLS",
         go: "GO!",
+        congratulations: "CONGRATULATIONS!",
+        start: "START",
+        levelComplete: "Level Complete!",
         mapsList: {
             highway: { name: "HIGHWAY", desc: "Open Road Racing" },
             city: { name: "CITY", desc: "Urban Streets" },
@@ -88,6 +91,9 @@ const translations = {
         maxSpeed: "अधिकतम रफ़्तार",
         controls: "नियंत्रण",
         go: "शुरू!",
+        congratulations: "बधाई हो!",
+        start: "शुरू करें",
+        levelComplete: "लेवल पूरा!",
         mapsList: {
             highway: { name: "हाईवे", desc: "खुली सड़क रेसिंग" },
             city: { name: "शहर", desc: "शहरी सड़कें" },
@@ -135,6 +141,9 @@ const translations = {
         maxSpeed: "Velocidad Máxima",
         controls: "CONTROLES",
         go: "¡VAMOS!",
+        congratulations: "¡FELICITACIONES!",
+        start: "INICIAR",
+        levelComplete: "¡Nivel completo!",
         mapsList: {
             highway: { name: "AUTOPISTA", desc: "Carreras en Carretera Abierta" },
             city: { name: "CIUDAD", desc: "Calles Urbanas" },
@@ -182,6 +191,9 @@ const translations = {
         maxSpeed: "Vitesse Maximale",
         controls: "CONTRÔLES",
         go: "PARTEZ!",
+        congratulations: "FÉLICITATIONS!",
+        start: "COMMENCER",
+        levelComplete: "Niveau terminé!",
         mapsList: {
             highway: { name: "AUTOROUTE", desc: "Course sur Route Ouverte" },
             city: { name: "VILLE", desc: "Rues Urbaines" },
@@ -229,6 +241,9 @@ const translations = {
         maxSpeed: "Höchstgeschwindigkeit",
         controls: "STEUERUNG",
         go: "LOS!",
+        congratulations: "GLÜCKWUNSCH!",
+        start: "STARTEN",
+        levelComplete: "Level abgeschlossen!",
         mapsList: {
             highway: { name: "AUTOBAHN", desc: "Offenes Straßenrennen" },
             city: { name: "STADT", desc: "Stadtstraßen" },
@@ -1106,7 +1121,95 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
     );
 }
 
-// WIN POPUP
+// CONGRATULATIONS POPUP - shown at each 100km milestone
+function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang }) {
+    const t = translations[lang];
+    const kmCompleted = level * 100;
+    const isLastLevel = level >= 5;
+
+    return (
+        <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.88)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            animation: 'fadeIn 0.3s',
+            padding: 'clamp(10px, 3vw, 20px)',
+            boxSizing: 'border-box',
+        }}>
+            <div style={{
+                background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 60%, #FFD700 100%)',
+                padding: 'clamp(25px, 5vw, 45px)',
+                borderRadius: 'clamp(20px, 3vw, 30px)',
+                textAlign: 'center',
+                border: 'clamp(3px, 0.5vw, 5px) solid #FFD700',
+                boxShadow: '0 30px 100px rgba(56,239,125,0.5)',
+                maxWidth: '95vw',
+                width: 'clamp(280px, 90vw, 580px)',
+                animation: 'popIn 0.5s',
+            }}>
+                <div style={{ fontSize: 'clamp(40px, 10vw, 70px)', marginBottom: '8px', animation: 'bounce 1s infinite' }}>🎉</div>
+                <h2 style={{ fontSize: 'clamp(22px, 6vw, 38px)', color: '#fff', margin: '6px 0', textShadow: '0 3px 15px rgba(0,0,0,0.5)', fontWeight: '900' }}>
+                    {t.congratulations}
+                </h2>
+                <div style={{ margin: 'clamp(5px, 1vh, 10px) 0' }}>
+                    <p style={{ fontSize: 'clamp(16px, 4.5vw, 28px)', margin: '6px 0', color: '#fff', fontWeight: 'bold' }}>
+                        🏁 {kmCompleted} km {t.levelComplete}
+                    </p>
+                    <p style={{ fontSize: 'clamp(13px, 3.5vw, 22px)', margin: '6px 0', color: '#FFD700', fontWeight: 'bold' }}>
+                        🪙 {t.coins}: +{coins}
+                    </p>
+                    {!isLastLevel && (
+                        <p style={{ fontSize: 'clamp(12px, 3vw, 18px)', margin: '6px 0', color: '#fff', opacity: 0.9 }}>
+                            🎯 Next: {(level + 1) * 100} km
+                        </p>
+                    )}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 1vh, 10px)', alignItems: 'center' }}>
+                    {!isLastLevel && (
+                        <button
+                            onClick={onStart}
+                            style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#000', fontWeight: '900', boxShadow: '0 10px 30px rgba(255,215,0,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                            🚀 {t.start}
+                        </button>
+                    )}
+                    {isLastLevel && (
+                        <button
+                            onClick={onStart}
+                            style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: '#fff', fontWeight: '900', boxShadow: '0 10px 30px rgba(245,87,108,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                            🎮 {t.playAgain}
+                        </button>
+                    )}
+                    <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                        🗺️ {t.mapsButton}
+                    </button>
+                    <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                        🏠 {t.home}
+                    </button>
+                </div>
+            </div>
+            <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+      `}</style>
+        </div>
+    );
+}
+
+// WIN POPUP - shown only when all 5 levels (500km) are done
 function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang }) {
     const t = translations[lang];
 
@@ -1138,21 +1241,16 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
                 width: 'clamp(280px, 90vw, 600px)',
                 animation: 'popIn 0.5s',
             }}>
-                <div style={{ fontSize: 'clamp(30px, 8vw, 60px)', marginBottom: 'clamp(5px, 1vh, 10px)', animation: 'bounce 1s infinite' }}>🏆</div>
+                <div style={{ fontSize: 'clamp(30px, 8vw, 60px)', marginBottom: 'clamp(5px, 1vh, 10px)', animation: 'bounce 1s infinite' }}>⭐🪙</div>
                 <h2 style={{ fontSize: 'clamp(24px, 7vw, 40px)', color: '#FFD700', margin: 'clamp(2px, 0.5vh, 5px) 0', textShadow: '0 5px 20px rgba(0,0,0,0.5)' }}>
                     {t.champion}
                 </h2>
-                <div style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    padding: 'clamp(10px, 2vw, 20px)',
-                    borderRadius: 'clamp(12px, 2vw, 18px)',
-                    margin: 'clamp(10px, 2vh, 15px) 0',
-                }}>
+                <div style={{ margin: 'clamp(5px, 1vh, 10px) 0' }}>
                     <p style={{ fontSize: 'clamp(14px, 4vw, 24px)', margin: 'clamp(4px, 1vh, 10px) 0', color: '#FFD700' }}>
                         {t.score}: <strong style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong>
                     </p>
                     <p style={{ fontSize: 'clamp(12px, 3.5vw, 20px)', margin: 'clamp(4px, 1vh, 10px) 0', color: 'white' }}>
-                        {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km / 100km</strong>
+                        {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km / 500km</strong>
                     </p>
                     <p style={{ fontSize: 'clamp(14px, 4vw, 28px)', margin: 'clamp(4px, 1vh, 10px) 0', color: '#FFD700', fontWeight: 'bold' }}>
                         🪙 {t.coins}: +{coins}
@@ -1191,6 +1289,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     const [score, setScore] = useState(0);
     const [viewAngle, setViewAngle] = useState("top");
     const [showWinPopup, setShowWinPopup] = useState(false);
+    const [showCongrats, setShowCongrats] = useState(false);
+    const [currentLevel, setCurrentLevel] = useState(1); // 1=100km, 2=200km ... 5=500km
     const [earnedCoins, setEarnedCoins] = useState(0);
     const [isMobile, setIsMobile] = useState(() => {
         return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -1233,6 +1333,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         touchStartX: null,
         touchStartY: null, // Track Y for speed control
         touchDirection: null,
+        _levelTarget: 10000, // first milestone = 100km
     });
 
     const [canvasSize, setCanvasSize] = useState({
@@ -1948,10 +2049,15 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
             }
 
-            if (s.distance > 9000 && s.distance < 10500) {
-                const finishY = H - ((s.distance - 9000) * 0.3);
-                if (finishY > -50 && finishY < H) {
-                    drawFinishLine(finishY);
+            // Draw finish line ONLY at 500km (50000 distance units) - the final milestone
+            {
+                const finalTarget = 50000;
+                const approachStart = finalTarget - 1000;
+                if (s.distance > approachStart && s.distance < finalTarget + 500) {
+                    const finishY = H - ((s.distance - approachStart) * 0.3);
+                    if (finishY > -50 && finishY < H) {
+                        drawFinishLine(finishY);
+                    }
                 }
             }
 
@@ -2009,13 +2115,26 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 setDistance(s.distance);
                 setSpeed(s.speed);
 
-                if (s.distance > 10000) {
-                    const finalScore = s.score + Math.floor(s.distance / 2) + s.earnedCoins * 5;
-                    setScore(finalScore);
+                // Milestone check: each 100km = 10000 distance units
+                const levelTarget = s._levelTarget || 10000;
+                if (s.distance >= levelTarget) {
+                    const completedLevel = Math.round(levelTarget / 10000);
+                    setScore(prev => prev + Math.floor(s.earnedCoins * 5));
                     setEarnedCoins(s.earnedCoins);
                     setCoins(prev => prev + s.earnedCoins);
-                    setShowWinPopup(true);
-                    setScreen("finish");
+                    s.earnedCoins = 0; // reset for next level
+                    setCurrentLevel(completedLevel);
+                    if (completedLevel >= 5) {
+                        // All 500km done - show final win popup
+                        const finalScore = s.score + Math.floor(s.distance / 2);
+                        setScore(finalScore);
+                        setShowWinPopup(true);
+                        setScreen("finish");
+                    } else {
+                        // Show congratulations popup, pause the game
+                        setShowCongrats(true);
+                        setScreen("finish");
+                    }
                     return;
                 }
 
@@ -2288,6 +2407,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             roadOffset: 0,
             touchStartX: null,
             touchDirection: null,
+            _levelTarget: 10000, // reset to first 100km milestone
         };
         setDistance(0);
         setSpeed(0);
@@ -2295,7 +2415,24 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         setEarnedCoins(0);
         setCount(3);
         setShowWinPopup(false);
-        setScreen("countdown"); // Reset screen to countdown to restart the game
+        setShowCongrats(false);
+        setCurrentLevel(1);
+        setScreen("countdown");
+    };
+
+    // Continue to next level after Congratulations popup
+    const continueNextLevel = () => {
+        const nextLevel = currentLevel + 1;
+        // Set next level target in game state ref
+        stateRef.current._levelTarget = nextLevel * 10000;
+        stateRef.current.enemies = [];
+        stateRef.current.coins = [];
+        stateRef.current.keys = {};
+        stateRef.current.touchDirection = null;
+        setShowCongrats(false);
+        setEarnedCoins(0);
+        setCount(3);
+        setScreen("countdown");
     };
 
     return (
@@ -2312,6 +2449,17 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             margin: 0,
             padding: 0,
         }}>
+            {showCongrats && !showWinPopup && (
+                <CongratulationsPopup
+                    level={currentLevel}
+                    coins={earnedCoins}
+                    onStart={continueNextLevel}
+                    onMapSelect={onMapSelect}
+                    onHome={onHome}
+                    lang={lang}
+                />
+            )}
+
             {showWinPopup && (
                 <WinPopup
                     score={score}
@@ -2405,7 +2553,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 </div>
             )}
 
-            {(screen === "countdown" || screen === "play") && (
+            {true && (
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <canvas
                         ref={canvasRef}
@@ -2420,7 +2568,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     />
 
                     {/* HUD Rendered ON TOP of Canvas */}
-                    {(screen === "play" || screen === "countdown") && (
+                    {true && (
                         <div style={{
                             position: 'absolute',
                             top: 0,
@@ -2455,7 +2603,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 }}>
                                     <div style={{ color: '#FFD700' }}>{t.score}: {score}</div>
                                     <div>{t.speed}: {Math.floor(speed * 20)} km/h</div>
-                                    <div style={{ fontSize: '0.8em', opacity: 0.9 }}>{Math.floor(distance / 100)}km / 100km</div>
+                                    <div style={{ fontSize: '0.8em', opacity: 0.9 }}>
+                                        {Math.floor(distance / 100)}km / 500km
+                                    </div>
                                 </div>
 
                                 {/* Right Stats: Settings, Coins & Pause */}
@@ -2572,38 +2722,53 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
             {screen === "gameover" && (
                 <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    background: 'rgba(0,0,0,0.85)',
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    height: '100vh',
-                    padding: 'clamp(20px, 5vw, 40px)',
+                    zIndex: 1000,
+                    animation: 'fadeIn 0.3s',
+                    padding: 'clamp(10px, 3vw, 20px)',
+                    boxSizing: 'border-box',
+                    overflowY: 'auto',
                 }}>
-                    <h2 style={{ fontSize: 'clamp(30px, 10vw, 50px)', color: '#ff4444', margin: 'clamp(1px, 1vh, 5px)', textShadow: '0 5px 20px rgba(255,68,68,0.5)' }}>💥 {t.crash}</h2>
                     <div style={{
-                        background: 'rgba(255,255,255,0.1)',
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        borderRadius: 'clamp(12px, 2vw, 20px)',
-                        maxWidth: '90vw',
-                        width: 'clamp(260px, 85vw, 450px)',
-                        margin: 'clamp(10px, 2vh, 15px) auto',
-                        border: '2px solid rgba(255,68,68,0.5)',
+                        background: 'linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%)',
+                        padding: 'clamp(25px, 5vw, 50px)',
+                        borderRadius: 'clamp(20px, 3vw, 30px)',
+                        textAlign: 'center',
+                        border: 'clamp(3px, 0.5vw, 5px) solid #ff4444',
+                        boxShadow: '0 30px 100px rgba(255,68,68,0.4)',
+                        maxWidth: '95vw',
+                        width: 'clamp(280px, 90vw, 600px)',
+                        animation: 'popIn 0.5s',
                     }}>
-                        <p style={{ fontSize: 'clamp(18px, 5vw, 28px)', margin: 'clamp(5px, 1vh, 10px)', color: '#FFD700', fontWeight: 'bold' }}>{t.score}: <strong style={{ textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong></p>
-                        <p style={{ fontSize: 'clamp(14px, 4vw, 22px)', margin: 'clamp(4px, 1vh, 8px)', color: '#fff' }}>{t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km</strong></p>
-                        <p style={{ fontSize: 'clamp(14px, 4vw, 22px)', margin: 'clamp(4px, 1vh, 8px)', color: '#fff' }}>{t.maxSpeed}: <strong style={{ color: '#FFD700' }}>{Math.floor(speed * 15)} km/h</strong></p>
-                        <p style={{ fontSize: 'clamp(16px, 4.5vw, 26px)', margin: 'clamp(5px, 1vh, 10px)', color: '#FFD700', fontWeight: 'bold' }}>🪙 {t.coins}: +{earnedCoins}</p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(5px, 1vh, 8px)', alignItems: 'center', width: '100%', maxWidth: '350px' }}>
-                        <button onClick={restart} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(25px, 5vw, 40px)', fontSize: 'clamp(14px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontWeight: 'bold', boxShadow: '0 10px 30px rgba(102, 126, 234, 0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                            🔄 {t.restart}
-                        </button>
-                        <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(25px, 5vw, 40px)', fontSize: 'clamp(14px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#555', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                            🗺️ {t.mapsButton}
-                        </button>
-                        <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(25px, 5vw, 40px)', fontSize: 'clamp(14px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#333', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                            🏠 {t.home}
-                        </button>
+                        <div style={{ fontSize: 'clamp(40px, 10vw, 70px)', marginBottom: '8px', animation: 'bounce 1s infinite' }}>💥</div>
+                        <h2 style={{ fontSize: 'clamp(28px, 8vw, 45px)', color: '#ff4444', margin: 'clamp(2px, 0.5vh, 5px) 0', textShadow: '0 5px 20px rgba(255,68,68,0.5)', fontWeight: '900' }}>
+                            {t.crash}
+                        </h2>
+                        <div style={{ margin: 'clamp(10px, 2vh, 15px) 0' }}>
+                            <p style={{ fontSize: 'clamp(18px, 5vw, 28px)', margin: 'clamp(5px, 1vh, 10px)', color: '#FFD700', fontWeight: 'bold' }}>{t.score}: <strong style={{ textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong></p>
+                            <p style={{ fontSize: 'clamp(15px, 4vw, 22px)', margin: 'clamp(5px, 1vh, 8px)', color: '#fff' }}>{t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km</strong></p>
+                            <p style={{ fontSize: 'clamp(15px, 4vw, 22px)', margin: 'clamp(5px, 1vh, 8px)', color: '#fff' }}>{t.maxSpeed}: <strong style={{ color: '#FFD700' }}>{Math.floor(speed * 15)} km/h</strong></p>
+                            <p style={{ fontSize: 'clamp(18px, 5vw, 28px)', margin: 'clamp(8px, 1.5vh, 12px)', color: '#FFD700', fontWeight: 'bold' }}>🪙 {t.coins}: +{earnedCoins}</p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vh, 12px)', alignItems: 'center' }}>
+                            <button onClick={restart} style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontWeight: '900', boxShadow: '0 10px 30px rgba(102, 126, 234, 0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                🔄 {t.restart}
+                            </button>
+                            <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                🗺️ {t.mapsButton}
+                            </button>
+                            <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                🏠 {t.home}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
