@@ -257,6 +257,139 @@ const translations = {
     }
 };
 
+// REUSABLE ROAD PREVIEW COMPONENT - Fills entire container, matches gameplay "same to same"
+const RoadPreview = ({ mapId, opacity = 1 }) => {
+    // Exact colors from Game component
+    const mapColors = {
+        highway: { sky: '#87CEEB', road: '#2a2a2a', line: '#FFD700', side: '#228B22' },
+        city: { sky: '#1a1a2e', road: '#333', line: '#fff', side: '#0f0f1e' },
+        desert: { sky: '#FFB347', road: '#8B7355', line: '#FFE4B5', side: '#DEB887' },
+        snow: { sky: '#B0E0E6', road: '#404040', line: '#87CEEB', side: '#FFFAFA' },
+        jungle: { sky: '#3a7d44', road: '#654321', line: '#90EE90', side: '#2d5016' },
+        night: { sky: '#0a0a1a', road: '#1a1a1a', line: '#FFD700', side: '#050510' },
+        beach: { sky: '#87CEEB', road: '#F4A460', line: '#FFF8DC', side: '#4682B4' },
+        mountain: { sky: '#778899', road: '#696969', line: '#DCDCDC', side: '#2F4F4F' },
+    };
+
+    const colors = mapColors[mapId] || mapColors.highway;
+
+    // Decoration builders matching Game.drawX functions - Adjusted to avoid road overlap
+    const renderDecorations = (side) => {
+        const x = side === 'left' ? 5 : 95;
+        const scale = 0.35; // Smaller scale to avoid road overlap
+
+        switch (mapId) {
+            case 'city':
+                return (
+                    <g transform={`translate(${x}, 0) scale(${scale})`}>
+                        {/* Skyscraper style for City */}
+                        <rect x="-40" y="-50" width="80" height="250" fill="#263238" />
+                        <rect x="-30" y="-40" width="10" height="10" fill="#81D4FA" />
+                        <rect x="-10" y="-40" width="10" height="10" fill="#81D4FA" />
+                        <rect x="10" y="-40" width="10" height="10" fill="#81D4FA" />
+                        <rect x="20" y="-40" width="10" height="10" fill="#81D4FA" />
+                        <rect x="-30" y="-10" width="10" height="10" fill="#81D4FA" />
+                        <rect x="10" y="-10" width="10" height="10" fill="#81D4FA" />
+                        <rect x="0" y="-70" width="4" height="20" fill="#455A64" /> {/* Antenna */}
+                    </g>
+                );
+            case 'night':
+                return (
+                    <g transform={`translate(${x}, 0) scale(${scale})`}>
+                        {/* Hotel style for Night */}
+                        <rect x="-35" y="10" width="70" height="100" fill="#455A64" />
+                        <rect x="-25" y="20" width="15" height="12" fill="#FFF176" opacity="0.8" />
+                        <rect x="10" y="20" width="15" height="12" fill="#FFF176" opacity="0.8" />
+                        <rect x="-15" y="75" width="30" height="25" fill="#1C313A" />
+                        <rect x="-30" y="-5" width="60" height="15" fill="#B71C1C" />
+                        <text x="0" y="5" fontSize="10" fill="white" fontWeight="bold" textAnchor="middle">HOTEL</text>
+
+                        <g transform="translate(0, 150)">
+                            <rect x="-30" y="0" width="60" height="50" fill="#8D6E63" />
+                            <path d="M -35 0 L 0 -25 L 35 0 Z" fill="#5D4037" />
+                            <rect x="-10" y="30" width="20" height="20" fill="#3E2723" />
+                        </g>
+                    </g>
+                );
+            case 'desert':
+                return (
+                    <g transform={`translate(${x}, 0) scale(${scale})`}>
+                        <path d="M -50 40 Q 0 -10 50 40 Z" fill="#DEB887" stroke="#C19A6B" strokeWidth="2" />
+                        <g transform="translate(0, 100)">
+                            <rect x="-4" y="0" width="8" height="30" fill="#2D5A27" rx="4" />
+                            <rect x="-15" y="10" width="12" height="6" fill="#2D5A27" rx="3" />
+                            <rect x="3" y="15" width="12" height="6" fill="#2D5A27" rx="3" />
+                        </g>
+                    </g>
+                );
+            case 'snow':
+                return (
+                    <g transform={`translate(${x}, 0) scale(${scale})`}>
+                        <path d="M -40 40 L 0 0 L 40 40 Z" fill="white" stroke="#B0E0E6" strokeWidth="2" />
+                        <g transform="translate(0, 80)">
+                            <circle cx="0" cy="20" r="15" fill="white" stroke="#ccc" />
+                            <circle cx="0" cy="0" r="10" fill="white" stroke="#ccc" />
+                            <rect x="-8" y="-2" width="16" height="4" fill="#8B4513" />
+                        </g>
+                    </g>
+                );
+            case 'jungle':
+            case 'highway':
+            default:
+                return (
+                    <g transform={`translate(${x}, 0) scale(${scale})`}>
+                        <rect x="-4" y="0" width="8" height="25" fill="#8B4513" />
+                        <circle cx="0" cy="0" r="14" fill="#228B22" />
+                        <circle cx="-8" cy="5" r="12" fill="#228B22" />
+                        <circle cx="8" cy="5" r="12" fill="#228B22" />
+                        <g transform="translate(0, 100)">
+                            <rect x="-4" y="0" width="8" height="25" fill="#8B4513" />
+                            <circle cx="0" cy="0" r="14" fill="#228B22" />
+                        </g>
+                    </g>
+                );
+        }
+    };
+
+    return (
+        <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', pointerEvents: 'none', borderRadius: '18px', opacity }} preserveAspectRatio="none">
+            {/* Shoulder/Side Areas */}
+            <rect width="100" height="100" fill={colors.side} />
+
+            {/* Road Area (Top-Down Parallel) */}
+            <rect x="20" y="0" width="60" height="100" fill={colors.road} />
+
+            {/* Lane Dividers (Two lines for three lanes) */}
+            <line x1="40" y1="0" x2="40" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
+                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
+            </line>
+            <line x1="60" y1="0" x2="60" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
+                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
+            </line>
+
+            {/* Moving Coin */}
+            <g>
+                <circle cx="70" cy="50" r="4" fill="#FFD700" stroke="#B8860B" strokeWidth="0.5">
+                    <animate attributeName="opacity" values="1;0.6;1" dur="1s" repeatCount="indefinite" />
+                </circle>
+                <animateTransform attributeName="transform" type="translate" from="0 -100" to="0 100" dur="1s" repeatCount="indefinite" />
+            </g>
+
+            {/* Moving Decorations */}
+            <g>
+                <animateTransform attributeName="transform" type="translate" from="0 -100" to="0 100" dur="2s" repeatCount="indefinite" />
+                {renderDecorations('left')}
+                {renderDecorations('right')}
+            </g>
+            <g>
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="0 200" dur="2s" repeatCount="indefinite" />
+                {renderDecorations('left')}
+                {renderDecorations('right')}
+            </g>
+        </svg>
+    );
+};
+
 // HOME SCREEN WITH ENHANCED VISUALS
 function HomeScreen({ onPlay, lang }) {
     const t = translations[lang];
@@ -347,14 +480,24 @@ function HomeScreen({ onPlay, lang }) {
                     flex: 'shrink',
                     minHeight: 'fit-content',
                 }}>
-                    <h1 style={{
+                    <h1 className="title-3d" style={{
                         fontSize: 'clamp(32px, 10vw, 90px)',
                         margin: '0',
                         color: '#FFD700',
-                        textShadow: '4px 4px 0px #000, 8px 8px 0px rgba(0,0,0,0.3), 0 0 30px rgba(255,215,0,0.6)',
                         fontWeight: '900',
                         letterSpacing: 'clamp(1px, 1vw, 8px)',
                         WebkitTextStroke: '3px #000',
+                        textShadow: [
+                            '1px 1px 0 #b8860b',
+                            '2px 2px 0 #b8860b',
+                            '3px 3px 0 #9a7200',
+                            '4px 4px 0 #9a7200',
+                            '5px 5px 0 #7a5900',
+                            '6px 6px 0 #7a5900',
+                            '7px 7px 0 #5c4000',
+                            '8px 8px 0 #3a2800',
+                            '10px 12px 16px rgba(0,0,0,0.7)',
+                        ].join(', '),
                         animation: 'titleGlow 2s ease-in-out infinite',
                     }}>
                         {t.title}
@@ -376,32 +519,46 @@ function HomeScreen({ onPlay, lang }) {
                     flex: 'shrink',
                     minHeight: 'fit-content',
                     maxWidth: '90vw',
+                    margin: '0 auto',
+                    alignSelf: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
                 }}>
                     <svg width="clamp(120px, 40vw, 400px)" height="clamp(60px, 20vw, 200px)" viewBox="0 0 300 150" style={{ transform: 'scaleX(-1)', width: '100%', height: 'auto', shapeRendering: 'geometricPrecision' }} preserveAspectRatio="xMidYMid meet">
-                        <rect x="40" y="70" width="220" height="60" fill="#FFA500" rx="12" stroke="none" />
+                        <rect x="40" y="70" width="220" height="60" fill="#FF8C00" rx="12" stroke="none" />
                         <path d="M 80 70 L 120 32 L 200 32 L 230 70 Z" fill="#FF8C00" stroke="none" />
                         <path d="M 85 70 L 120 36 L 200 36 L 225 70 Z" fill="#FFAA33" opacity="0.5" stroke="none" />
-                        <path d="M 92 68 L 122 42 L 178 42 L 208 68 Z" fill="#87CEEB" opacity="0.8" stroke="#555" strokeWidth="2" />
-                        <line x1="150" y1="42" x2="150" y2="68" stroke="#555" strokeWidth="2.5" />
-                        <rect x="42" y="115" width="216" height="15" fill="#000" opacity="0.2" rx="8" stroke="none" />
-                        <ellipse cx="90" cy="128" rx="32" ry="18" fill="#222" stroke="none" />
-                        <ellipse cx="210" cy="128" rx="32" ry="18" fill="#222" stroke="none" />
-                        <circle cx="90" cy="130" r="25" fill="#1a1a1a" stroke="none" />
-                        <circle cx="90" cy="130" r="18" fill="#333" stroke="none" />
-                        <circle cx="90" cy="130" r="10" fill="#555" stroke="none" />
-                        <circle cx="90" cy="130" r="4" fill="#777" stroke="none" />
-                        <circle cx="210" cy="130" r="25" fill="#1a1a1a" stroke="none" />
-                        <circle cx="210" cy="130" r="18" fill="#333" stroke="none" />
-                        <circle cx="210" cy="130" r="10" fill="#555" stroke="none" />
-                        <circle cx="210" cy="130" r="4" fill="#777" stroke="none" />
-                        <rect x="238" y="76" width="18" height="48" fill="#FF6347" rx="4" stroke="none" />
-                        <ellipse cx="253" cy="86" rx="7" ry="11" fill="#FFFF00" stroke="none" />
-                        <ellipse cx="253" cy="86" rx="4" ry="7" fill="#FFFFAA" stroke="none" />
-                        <ellipse cx="253" cy="109" rx="7" ry="11" fill="#FFFF00" stroke="none" />
-                        <ellipse cx="253" cy="109" rx="4" ry="7" fill="#FFFFAA" stroke="none" />
-                        <line x1="148" y1="75" x2="148" y2="125" stroke="#D88400" strokeWidth="2" opacity="0.6" />
-                        <rect x="235" y="60" width="8" height="6" fill="#FF8C00" rx="2" stroke="none" />
-                        <rect x="50" y="75" width="180" height="8" fill="#FFD700" opacity="0.3" rx="4" stroke="none" />
+                        <path d="M 95 68 L 122 42 L 196 42 L 217 68 Z" fill="#87CEEB" opacity="0.8" stroke="#555" strokeWidth="2" />
+
+                        <line x1="150" y1="69" x2="150" y2="130" stroke="#D88400" strokeWidth="2" opacity="0.6" />
+
+                        <line x1="150" y1="43" x2="150" y2="67" stroke="#e0dedeff" strokeWidth="2.5" />
+
+                        {/* Alloy Wheels - centered at cy=120 so bottom of tire (cy+r=120+24=144≈car bottom) */}
+                        <circle cx="90" cy="120" r="24" fill="#1a1a1a" />
+                        <circle cx="90" cy="120" r="14" fill="#d0d0d0" stroke="#888" strokeWidth="3" />
+                        <line x1="90" y1="108" x2="90" y2="132" stroke="#888" strokeWidth="2" />
+                        <line x1="78" y1="120" x2="102" y2="120" stroke="#888" strokeWidth="2" />
+                        <line x1="81.5" y1="111.5" x2="98.5" y2="128.5" stroke="#888" strokeWidth="2" />
+                        <line x1="81.5" y1="128.5" x2="98.5" y2="111.5" stroke="#888" strokeWidth="2" />
+                        <circle cx="90" cy="120" r="5" fill="#444" />
+
+                        <circle cx="210" cy="120" r="24" fill="#1a1a1a" />
+                        <circle cx="210" cy="120" r="14" fill="#d0d0d0" stroke="#888" strokeWidth="3" />
+                        <line x1="210" y1="108" x2="210" y2="132" stroke="#888" strokeWidth="2" />
+                        <line x1="198" y1="120" x2="222" y2="120" stroke="#888" strokeWidth="2" />
+                        <line x1="201.5" y1="111.5" x2="218.5" y2="128.5" stroke="#888" strokeWidth="2" />
+                        <line x1="201.5" y1="128.5" x2="218.5" y2="111.5" stroke="#888" strokeWidth="2" />
+                        <circle cx="210" cy="120" r="5" fill="#444" />
+
+                        {/* Clean Headlights - two yellow rounded rects on the car front */}
+                        <rect x="38" y="90" width="14" height="16" fill="#FFE000" rx="3" stroke="#FFA500" strokeWidth="1.5" />
+
+                        {/* Taillights - two red rounded rects on the car rear */}
+                        <rect x="250" y="90" width="12" height="16" fill="#cc0000" rx="3" stroke="#800000" strokeWidth="1.5" />
+
+                        {/* <rect x="235" y="60" width="8" height="6" fill="#FF8C00" rx="2" stroke="none" /> */}
+                        {/* <rect x="50" y="75" width="180" height="8" fill="#FFD700" opacity="0.3" rx="4" stroke="none" /> */}
                     </svg>
                 </div>
             </div>
@@ -478,6 +635,7 @@ function HomeScreen({ onPlay, lang }) {
             </div>
 
             <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
         @keyframes carFloat {
           0%, 100% { transform: scaleX(-1) translateY(0); }
           50% { transform: scaleX(-1) translateY(-15px); }
@@ -491,8 +649,22 @@ function HomeScreen({ onPlay, lang }) {
           50% { transform: translateY(-10px); }
         }
         @keyframes titleGlow {
-          0%, 100% { textShadow: 4px 4px 0px #000, 8px 8px 0px rgba(0,0,0,0.3), 0 0 30px rgba(255,215,0,0.6); }
-          50% { textShadow: 4px 4px 0px #000, 8px 8px 0px rgba(0,0,0,0.3), 0 0 50px rgba(255,215,0,1); }
+          0%, 100% {
+            text-shadow:
+              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
+              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
+              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
+              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
+              10px 12px 16px rgba(0,0,0,0.7);
+          }
+          50% {
+            text-shadow:
+              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
+              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
+              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
+              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
+              10px 12px 16px rgba(0,0,0,0.9);
+          }
         }
 
         @keyframes badgeRotate {
@@ -515,6 +687,18 @@ function HomeScreen({ onPlay, lang }) {
           .building-1 { width: 60px !important; height: 120px !important; }
           .building-2 { width: 50px !important; height: 90px !important; }
           .building-3 { width: 70px !important; height: 140px !important; }
+        }
+
+        @media (max-width: 1024px) {
+          .title-3d {
+            text-shadow:
+              1px 1px 0 #b8860b,
+              2px 2px 0 #9a7200,
+              3px 3px 0 #7a5900,
+              4px 4px 0 #5c4000,
+              6px 8px 10px rgba(0,0,0,0.7) !important;
+            -webkit-text-stroke: 2px #000 !important;
+          }
         }
       `}</style>
         </div>
@@ -820,12 +1004,13 @@ function SettingsPanel({ onClose, settings, onSettingsChange, lang }) {
 function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) {
     const t = translations[lang];
     const [showSettings, setShowSettings] = useState(false);
+    const [hoveredMapId, setHoveredMapId] = useState(null);
 
     const maps = [
         { id: 'highway', icon: '🛣️', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
         { id: 'city', icon: '🌃', gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
         { id: 'desert', icon: '🏜️', gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
-        { id: 'snow', icon: '🏔️', gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
+        { id: 'snow', icon: '❄️', gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
         { id: 'night', icon: '🌙', gradient: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)' },
         { id: 'jungle', icon: '🌴', gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
         { id: 'beach', icon: '🏖️', gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
@@ -1027,47 +1212,86 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                         boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
                                     }}
                                     onMouseEnter={(e) => {
+                                        setHoveredMapId(map.id);
                                         e.currentTarget.style.transform = 'translateY(-10px) scale(1.03)';
                                         e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.6)';
-                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'; // Brighter on hover
-                                        e.currentTarget.style.borderColor = '#ffffff';
+                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                                     }}
                                     onMouseLeave={(e) => {
+                                        setHoveredMapId(null);
                                         e.currentTarget.style.transform = 'translateY(0) scale(1)';
                                         e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.4)';
                                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                                     }}
                                 >
-                                    <div style={{ fontSize: 'clamp(50px, 10vw, 90px)', marginBottom: 'clamp(8px, 1.5vh, 18px)' }}>{map.icon}</div>
-                                    <h2 style={{
-                                        fontSize: 'clamp(18px, 3.5vw, 36px)',
-                                        color: 'white',
-                                        margin: 'clamp(6px, 1vh, 12px) 0',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '1px',
-                                        textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                    }}>
-                                        {t.mapsList[map.id].name}
-                                    </h2>
-                                    <p style={{
-                                        color: 'rgba(255,255,255,0.8)',
-                                        fontSize: 'clamp(12px, 2.5vw, 18px)',
-                                        margin: 'clamp(6px, 1vh, 12px) 0',
-                                    }}>
-                                        {t.mapsList[map.id].desc}
-                                    </p>
+                                    {/* Road Preview Background - Full Container */}
                                     <div style={{
-                                        marginTop: 'clamp(10px, 2vh, 24px)',
-                                        padding: 'clamp(8px, 1.5vh, 14px) clamp(15px, 3vw, 30px)',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        borderRadius: '50px',
-                                        color: 'white',
-                                        fontWeight: 'bold',
-                                        fontSize: 'clamp(12px, 2vw, 18px)',
-                                        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        opacity: hoveredMapId === map.id ? 1 : 0,
+                                        transition: 'opacity 0.4s ease-in-out',
+                                        zIndex: 0,
+                                        overflow: 'hidden',
+                                        borderRadius: '18px',
                                     }}>
-                                        {t.select} →
+                                        <RoadPreview mapId={map.id} />
+                                    </div>
+
+                                    <div style={{
+                                        position: 'relative',
+                                        zIndex: 1,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                    }}>
+                                        <div style={{
+                                            fontSize: 'clamp(50px, 10vw, 90px)',
+                                            marginBottom: 'clamp(8px, 1.5vh, 18px)',
+                                            opacity: hoveredMapId === map.id ? 0 : 1,
+                                            transform: hoveredMapId === map.id ? 'translateY(-20px) scale(0.5)' : 'translateY(0) scale(1)',
+                                            transition: 'all 0.4s ease-in-out'
+                                        }}>
+                                            {map.icon}
+                                        </div>
+                                        <h2 style={{
+                                            fontSize: 'clamp(18px, 3.5vw, 36px)',
+                                            color: 'white',
+                                            margin: 'clamp(6px, 1vh, 12px) 0',
+                                            fontWeight: 'bold',
+                                            letterSpacing: '1px',
+                                            textShadow: hoveredMapId === map.id ? '0 2px 10px rgba(0,0,0,0.8)' : '0 2px 4px rgba(0,0,0,0.3)',
+                                            transition: 'all 0.3s',
+                                        }}>
+                                            {t.mapsList[map.id].name}
+                                        </h2>
+                                        <p style={{
+                                            color: hoveredMapId === map.id ? '#fff' : 'rgba(255,255,255,0.8)',
+                                            fontSize: 'clamp(12px, 2.5vw, 18px)',
+                                            margin: 'clamp(6px, 1vh, 12px) 0',
+                                            textShadow: hoveredMapId === map.id ? '0 1px 4px rgba(0,0,0,0.8)' : 'none',
+                                            fontWeight: hoveredMapId === map.id ? '600' : 'normal',
+                                            transition: 'all 0.3s',
+                                        }}>
+                                            {t.mapsList[map.id].desc}
+                                        </p>
+                                        <div style={{
+                                            marginTop: 'clamp(10px, 2vh, 24px)',
+                                            padding: 'clamp(8px, 1.5vh, 14px) clamp(15px, 3vw, 30px)',
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            borderRadius: '50px',
+                                            color: 'white',
+                                            fontWeight: 'bold',
+                                            fontSize: 'clamp(12px, 2vw, 18px)',
+                                            boxShadow: hoveredMapId === map.id ? '0 6px 20px rgba(0,0,0,0.4)' : '0 4px 15px rgba(0,0,0,0.2)',
+                                            transform: hoveredMapId === map.id ? 'scale(1.1)' : 'scale(1)',
+                                            transition: 'all 0.3s',
+                                        }}>
+                                            {t.select} →
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -1130,52 +1354,52 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
     return (
         <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            top: 0, left: 0,
+            width: '100vw', height: '100vh',
             background: 'rgba(0,0,0,0.88)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1000,
             animation: 'fadeIn 0.3s',
-            padding: 'clamp(10px, 3vw, 20px)',
+            padding: '12px',
             boxSizing: 'border-box',
         }}>
             <div style={{
                 background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 60%, #FFD700 100%)',
-                padding: 'clamp(25px, 5vw, 45px)',
-                borderRadius: 'clamp(20px, 3vw, 30px)',
+                padding: 'min(3vh, 28px) min(4vw, 32px)',
+                borderRadius: '20px',
                 textAlign: 'center',
-                border: 'clamp(3px, 0.5vw, 5px) solid #FFD700',
-                boxShadow: '0 30px 100px rgba(56,239,125,0.5)',
-                maxWidth: '95vw',
-                width: 'clamp(280px, 90vw, 580px)',
+                border: '3px solid #FFD700',
+                boxShadow: '0 20px 60px rgba(56,239,125,0.5)',
+                width: 'min(520px, 92vw)',
+                maxHeight: '92vh',
+                overflow: 'hidden',
                 animation: 'popIn 0.5s',
+                boxSizing: 'border-box',
             }}>
-                <div style={{ fontSize: 'clamp(40px, 10vw, 70px)', marginBottom: '8px', animation: 'bounce 1s infinite' }}>🎉</div>
-                <h2 style={{ fontSize: 'clamp(22px, 6vw, 38px)', color: '#fff', margin: '6px 0', textShadow: '0 3px 15px rgba(0,0,0,0.5)', fontWeight: '900' }}>
+                <div style={{ fontSize: 'min(7vh, 52px)', marginBottom: '4px', animation: 'bounce 1s infinite' }}>🎉</div>
+                <h2 style={{ fontSize: 'min(4vh, 32px)', color: '#fff', margin: '4px 0', textShadow: '0 3px 15px rgba(0,0,0,0.5)', fontWeight: '900' }}>
                     {t.congratulations}
                 </h2>
-                <div style={{ margin: 'clamp(5px, 1vh, 10px) 0' }}>
-                    <p style={{ fontSize: 'clamp(16px, 4.5vw, 28px)', margin: '6px 0', color: '#fff', fontWeight: 'bold' }}>
+                <div style={{ margin: '6px 0' }}>
+                    <p style={{ fontSize: 'min(3.5vh, 24px)', margin: '4px 0', color: '#fff', fontWeight: 'bold' }}>
                         🏁 {kmCompleted} km {t.levelComplete}
                     </p>
-                    <p style={{ fontSize: 'clamp(13px, 3.5vw, 22px)', margin: '6px 0', color: '#FFD700', fontWeight: 'bold' }}>
+                    <p style={{ fontSize: 'min(3vh, 20px)', margin: '4px 0', color: '#FFD700', fontWeight: 'bold' }}>
                         🪙 {t.coins}: +{coins}
                     </p>
                     {!isLastLevel && (
-                        <p style={{ fontSize: 'clamp(12px, 3vw, 18px)', margin: '6px 0', color: '#fff', opacity: 0.9 }}>
+                        <p style={{ fontSize: 'min(2.5vh, 16px)', margin: '4px 0', color: '#fff', opacity: 0.9 }}>
                             🎯 Next: {(level + 1) * 100} km
                         </p>
                     )}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 1vh, 10px)', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
                     {!isLastLevel && (
                         <button
                             onClick={onStart}
-                            style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#000', fontWeight: '900', boxShadow: '0 10px 30px rgba(255,215,0,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }}
+                            style={{ padding: 'min(1.8vh,14px) min(4vw,40px)', fontSize: 'min(2.8vh,20px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#000', fontWeight: '900', boxShadow: '0 8px 24px rgba(255,215,0,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '260px' }}
                             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
                             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         >
@@ -1185,17 +1409,17 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
                     {isLastLevel && (
                         <button
                             onClick={onStart}
-                            style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: '#fff', fontWeight: '900', boxShadow: '0 10px 30px rgba(245,87,108,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }}
+                            style={{ padding: 'min(1.8vh,14px) min(4vw,40px)', fontSize: 'min(2.8vh,20px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: '#fff', fontWeight: '900', boxShadow: '0 8px 24px rgba(245,87,108,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '260px' }}
                             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
                             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         >
                             🎮 {t.playAgain}
                         </button>
                     )}
-                    <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                    <button onClick={onMapSelect} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                         🗺️ {t.mapsButton}
                     </button>
-                    <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                    <button onClick={onHome} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                         🏠 {t.home}
                     </button>
                 </div>
@@ -1216,54 +1440,53 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
     return (
         <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            top: 0, left: 0,
+            width: '100vw', height: '100vh',
             background: 'rgba(0,0,0,0.9)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1000,
             animation: 'fadeIn 0.3s',
-            padding: 'clamp(10px, 3vw, 20px)',
+            padding: '12px',
             boxSizing: 'border-box',
-            overflowY: 'auto',
         }}>
             <div style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                padding: 'clamp(25px, 5vw, 50px)',
-                borderRadius: 'clamp(20px, 3vw, 30px)',
+                padding: 'min(3vh, 28px) min(4vw, 32px)',
+                borderRadius: '20px',
                 textAlign: 'center',
-                border: 'clamp(3px, 0.5vw, 5px) solid #FFD700',
-                boxShadow: '0 30px 100px rgba(255,215,0,0.5)',
-                maxWidth: '95vw',
-                width: 'clamp(280px, 90vw, 600px)',
+                border: '3px solid #FFD700',
+                boxShadow: '0 20px 60px rgba(255,215,0,0.5)',
+                width: 'min(540px, 92vw)',
+                maxHeight: '92vh',
+                overflow: 'hidden',
                 animation: 'popIn 0.5s',
+                boxSizing: 'border-box',
             }}>
-                <div style={{ fontSize: 'clamp(30px, 8vw, 60px)', marginBottom: 'clamp(5px, 1vh, 10px)', animation: 'bounce 1s infinite' }}>⭐🪙</div>
-                <h2 style={{ fontSize: 'clamp(24px, 7vw, 40px)', color: '#FFD700', margin: 'clamp(2px, 0.5vh, 5px) 0', textShadow: '0 5px 20px rgba(0,0,0,0.5)' }}>
+                <div style={{ fontSize: 'min(7vh, 52px)', marginBottom: 'min(1vh,8px)', animation: 'bounce 1s infinite' }}>⭐🪙</div>
+                <h2 style={{ fontSize: 'min(4vh, 34px)', color: '#FFD700', margin: 'min(0.5vh,4px) 0', textShadow: '0 5px 20px rgba(0,0,0,0.5)' }}>
                     {t.champion}
                 </h2>
-                <div style={{ margin: 'clamp(5px, 1vh, 10px) 0' }}>
-                    <p style={{ fontSize: 'clamp(14px, 4vw, 24px)', margin: 'clamp(4px, 1vh, 10px) 0', color: '#FFD700' }}>
+                <div style={{ margin: 'min(1vh,8px) 0' }}>
+                    <p style={{ fontSize: 'min(3vh,22px)', margin: 'min(1vh,8px) 0', color: '#FFD700' }}>
                         {t.score}: <strong style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong>
                     </p>
-                    <p style={{ fontSize: 'clamp(12px, 3.5vw, 20px)', margin: 'clamp(4px, 1vh, 10px) 0', color: 'white' }}>
+                    <p style={{ fontSize: 'min(2.7vh,19px)', margin: 'min(1vh,8px) 0', color: 'white' }}>
                         {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km / 500km</strong>
                     </p>
-                    <p style={{ fontSize: 'clamp(14px, 4vw, 28px)', margin: 'clamp(4px, 1vh, 10px) 0', color: '#FFD700', fontWeight: 'bold' }}>
+                    <p style={{ fontSize: 'min(3vh,22px)', margin: 'min(1vh,8px) 0', color: '#FFD700', fontWeight: 'bold' }}>
                         🪙 {t.coins}: +{coins}
                     </p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(5px, 1vh, 8px)', alignItems: 'center' }}>
-                    <button onClick={onRestart} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white', fontWeight: 'bold', boxShadow: '0 10px 30px rgba(245, 87, 108, 0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '7px', alignItems: 'center' }}>
+                    <button onClick={onRestart} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(245,87,108,0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                         🎮 {t.playAgain}
                     </button>
-                    <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#555', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                    <button onClick={onMapSelect} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#555', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                         🗺️ {t.mapsButton}
                     </button>
-                    <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#333', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                    <button onClick={onHome} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#333', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                         🏠 {t.home}
                     </button>
                 </div>
@@ -1279,9 +1502,12 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
 
 
 // GAME COMPONENT WITH PROPER CAR ENGINE SOUND
+let tutorialShown = false; // Tracks if tutorial has been shown this session
+
 function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSettingsChange, lang }) {
     const t = translations[lang];
-    const [screen, setScreen] = useState("countdown");
+    const isMobileInit = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const [screen, setScreen] = useState((isMobileInit && !tutorialShown) ? "tutorial" : "countdown");
 
     const [count, setCount] = useState(3);
     const [distance, setDistance] = useState(0);
@@ -1297,6 +1523,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     });
 
     const [showSettings, setShowSettings] = useState(false);
+    const [showTouchTutorial, setShowTouchTutorial] = useState(false);
+    const touchTutorialTimerRef = useRef(null);
 
     // Resume Handler
     const handleSettingsClose = () => {
@@ -1502,6 +1730,17 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         }
     }, [screen]);
 
+    // Tutorial auto-advance logic
+    useEffect(() => {
+        if (screen === "tutorial") {
+            tutorialShown = true;
+            const timer = setTimeout(() => {
+                setScreen("countdown");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [screen]);
+
     // Countdown logic
     useEffect(() => {
         if (screen === "countdown") {
@@ -1517,7 +1756,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
     // Game logic
     useEffect(() => {
-        if (screen !== "play" && screen !== "countdown") return;
+        if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
 
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -2061,7 +2300,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
             }
 
-            if (screen === "play") {
+            if (screen === "play" || screen === "countdown") {
                 s.coins.forEach(c => {
                     ctx.save();
                     ctx.translate(c.x + 15, c.y + 15);
@@ -2071,14 +2310,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     ctx.arc(0, 0, 15, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.restore();
-                    c.rotation = (c.rotation || 0) + 0.1;
+                    if (screen === "play") c.rotation = (c.rotation || 0) + 0.1;
                 });
             }
 
             const playerY = H - (isMobile ? 120 : 150);
             drawCar(s.carX, playerY, carW, carH, '#FF3366', true);
 
-            if (screen === "play") {
+            if (screen === "play" || screen === "countdown") {
                 s.enemies.forEach(e => {
                     drawCar(e.x, e.y, e.w, e.h, e.color, false, e.isOpposite);
                 });
@@ -2231,8 +2470,15 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     return;
                 }
 
-            } else if (screen === "countdown") {
+            } else if (screen === "countdown" || screen === "tutorial") {
                 stateRef.current.roadOffset = (stateRef.current.roadOffset + 5) % 70;
+
+                if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left') {
+                    if (s.carX > roadLeft + 10) s.carX -= 5;
+                }
+                if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D'] || s.touchDirection === 'right') {
+                    if (s.carX + carW < roadRight - 10) s.carX += 5;
+                }
             }
 
             draw();
@@ -2250,115 +2496,74 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             stateRef.current.keys[e.key] = false;
         };
 
-        const handleTouchStart = (e) => {
-            if (screen !== "play") return;
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
+        // 4-ZONE TOUCH CONTROLS:
+        // Top-Left = Steer Left | Top-Right = Steer Right
+        // Bottom-Left = Brake    | Bottom-Right = Speed Up
+        const applyTouchZone = (x, y) => {
             const w = window.innerWidth;
-
-            // Tap Steering Logic
-            if (touchX < w / 2) {
-                stateRef.current.keys['ArrowLeft'] = true;
-                stateRef.current.keys['ArrowRight'] = false;
-            } else {
-                stateRef.current.keys['ArrowRight'] = true;
-                stateRef.current.keys['ArrowLeft'] = false;
-            }
-
-            // Initialize Swipe Tracking for Speed
-            stateRef.current.touchStartY = touchY;
-        };
-
-        const handleTouchMove = (e) => {
-            if (screen !== "play") return;
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            const w = window.innerWidth;
+            const h = window.innerHeight;
             const s = stateRef.current;
+            // Reset steering keys and speed direction
+            s.keys['ArrowLeft'] = false;
+            s.keys['ArrowRight'] = false;
+            s.touchDirection = null;
 
-            // Maintain Steering on Drag
-            if (touchX < w / 2) {
-                s.keys['ArrowLeft'] = true;
-                s.keys['ArrowRight'] = false;
-            } else {
-                s.keys['ArrowRight'] = true;
-                s.keys['ArrowLeft'] = false;
-            }
-
-            // Restore Vertical Swipe for Speed (Age/Piche)
-            if (s.touchStartY !== null) {
-                const diffY = touchY - s.touchStartY;
-                if (diffY < -30) {
-                    s.touchDirection = 'up'; // Swipe Up -> Accelerate
-                } else if (diffY > 30) {
-                    s.touchDirection = 'down'; // Swipe Down -> Brake
+            if (y > h / 2) {
+                // Bottom half: steering only
+                if (x < w / 2) {
+                    s.keys['ArrowLeft'] = true;
                 } else {
-                    s.touchDirection = null;
+                    s.keys['ArrowRight'] = true;
+                }
+            } else {
+                // Top half: brake or speed only
+                if (x < w / 2) {
+                    s.touchDirection = 'down'; // Brake
+                } else {
+                    s.touchDirection = 'up'; // Speed up
                 }
             }
         };
 
+        const handleTouchStart = (e) => {
+            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+            if (e.target.closest('[data-ctrl]')) return;
+            applyTouchZone(e.touches[0].clientX, e.touches[0].clientY);
+        };
+
+        const handleTouchMove = (e) => {
+            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+            if (e.target.closest('[data-ctrl]')) return;
+            applyTouchZone(e.touches[0].clientX, e.touches[0].clientY);
+        };
+
         const handleTouchEnd = (e) => {
+            if (e.target.closest('[data-ctrl]')) return;
             const s = stateRef.current;
             s.keys['ArrowLeft'] = false;
             s.keys['ArrowRight'] = false;
-            s.touchStartY = null;
             s.touchDirection = null;
         };
 
         // MOUSE CONTROLS (Mirrors Touch for Desktop 'Mobile View' testing)
+        let mouseDown = false;
         const handleMouseDown = (e) => {
-            if (screen !== "play") return;
-            const x = e.clientX;
-            const y = e.clientY;
-            const w = window.innerWidth;
-
-            // Tap/Click Steering
-            if (x < w / 2) {
-                stateRef.current.keys['ArrowLeft'] = true;
-                stateRef.current.keys['ArrowRight'] = false;
-            } else {
-                stateRef.current.keys['ArrowRight'] = true;
-                stateRef.current.keys['ArrowLeft'] = false;
-            }
-            stateRef.current.touchStartY = y; // Reuse touchStartY for mouse drag
+            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+            mouseDown = true;
+            applyTouchZone(e.clientX, e.clientY);
         };
 
         const handleMouseMove = (e) => {
-            if (screen !== "play") return;
-            // Only process move if mouse is down (simulating drag)
-            if (stateRef.current.touchStartY === null) return;
-
-            const x = e.clientX;
-            const y = e.clientY;
-            const w = window.innerWidth;
-            const s = stateRef.current;
-
-            // Maintain Steering
-            if (x < w / 2) {
-                s.keys['ArrowLeft'] = true;
-                s.keys['ArrowRight'] = false;
-            } else {
-                s.keys['ArrowRight'] = true;
-                s.keys['ArrowLeft'] = false;
-            }
-
-            // Swipe/Drag Speed Logic
-            const diffY = y - s.touchStartY;
-            if (diffY < -30) {
-                s.touchDirection = 'up';
-            } else if (diffY > 30) {
-                s.touchDirection = 'down';
-            } else {
-                s.touchDirection = null;
-            }
+            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+            if (!mouseDown) return;
+            applyTouchZone(e.clientX, e.clientY);
         };
 
         const handleMouseUp = (e) => {
+            mouseDown = false;
             const s = stateRef.current;
             s.keys['ArrowLeft'] = false;
             s.keys['ArrowRight'] = false;
-            s.touchStartY = null;
             s.touchDirection = null;
         };
 
@@ -2417,23 +2622,25 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         setShowWinPopup(false);
         setShowCongrats(false);
         setCurrentLevel(1);
-        setScreen("countdown");
+        setScreen((isMobile && !tutorialShown) ? "tutorial" : "countdown");
     };
 
-    // Continue to next level after Congratulations popup
+    // Continue to next level after Congratulations popup - preserve car & road state
     const continueNextLevel = () => {
         const nextLevel = currentLevel + 1;
-        // Set next level target in game state ref
-        stateRef.current._levelTarget = nextLevel * 10000;
-        stateRef.current.enemies = [];
-        stateRef.current.coins = [];
-        stateRef.current.keys = {};
-        stateRef.current.touchDirection = null;
+        const s = stateRef.current;
+        // Advance the milestone target
+        s._levelTarget = nextLevel * 10000;
+        // Keep carX, enemies, and coins exactly where they are — no reset
+        s.keys = {};
+        s.touchDirection = null;
         setShowCongrats(false);
         setEarnedCoins(0);
         setCount(3);
-        setScreen("countdown");
+        setScreen((isMobile && !tutorialShown) ? "tutorial" : "countdown");
     };
+
+
 
     return (
         <div style={{
@@ -2696,7 +2903,123 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 fontSize: 'clamp(10px, 2vw, 14px)',
                                 border: '1px solid rgba(255,255,255,0.2)',
                             }}>
-                                <span style={{ color: '#FFD700' }}>{t.controls}:</span> {isMobile ? 'Swipe Left/Right' : 'WASD/Arrows | V=View'} ({viewAngle})
+                                <span style={{ color: '#FFD700' }}>{t.controls}:</span> {isMobile ? '⬅ Left | Right ➡ | 🛑 Brake | 🏎️ Speed' : 'WASD/Arrows | V=View'} ({viewAngle})
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Premium "How to Play" Popup overlay */}
+                    {isMobile && screen === "tutorial" && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                zIndex: 30, // Above everything
+                                pointerEvents: 'auto',
+                                background: 'linear-gradient(135deg, #0a0f1a 0%, #171630 100%)', // Completely hides old background
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                animation: 'fadeIn 0.5s',
+                            }}
+                        >
+                            {/* Full Screen Content Box */}
+                            <div style={{
+                                width: '100%',
+                                height: '100%',
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                backdropFilter: 'blur(20px)',
+                                WebkitBackdropFilter: 'blur(20px)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                padding: 'clamp(20px, 4vw, 40px)',
+                                animation: 'popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                boxSizing: 'border-box'
+                            }}>
+                                {/* Header */}
+                                <h2 style={{
+                                    color: '#fff',
+                                    margin: '0 0 clamp(16px, 3vh, 30px) 0',
+                                    fontSize: 'clamp(24px, 6vw, 36px)',
+                                    fontWeight: '900',
+                                    letterSpacing: '2px',
+                                    textTransform: 'uppercase',
+                                    textAlign: 'center',
+                                    textShadow: '0 2px 10px rgba(255,255,255,0.3)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <span style={{ fontSize: 'clamp(32px, 8vw, 48px)' }}>🎮</span> HOW TO PLAY
+                                </h2>
+
+                                {/* Instructions Grid simulating the full screen touch zones */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gridTemplateRows: '1fr 1fr',
+                                    gap: 'clamp(12px, 2vw, 24px)',
+                                    width: '100%',
+                                    flex: 1, // Takes up remaining height
+                                    background: 'rgba(0,0,0,0.3)',
+                                    borderRadius: '24px',
+                                    padding: 'clamp(12px, 2vw, 24px)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    boxSizing: 'border-box'
+                                }}>
+                                    {/* Top Left - Brake */}
+                                    <div style={{
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                                        background: 'linear-gradient(135deg, rgba(239, 83, 80, 0.25) 0%, rgba(211, 47, 47, 0.15) 100%)',
+                                        border: '2px solid rgba(239, 83, 80, 0.4)'
+                                    }}>
+                                        <div style={{ fontSize: 'clamp(40px, 10vw, 80px)', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))', marginBottom: '8px' }}>🛑</div>
+                                        <div style={{ color: '#EF5350', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold', letterSpacing: '2px' }}>BRAKE</div>
+                                    </div>
+                                    {/* Top Right - Speed */}
+                                    <div style={{
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                                        background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.25) 0%, rgba(56, 142, 60, 0.15) 100%)',
+                                        border: '2px solid rgba(76, 175, 80, 0.4)'
+                                    }}>
+                                        <div style={{ fontSize: 'clamp(40px, 10vw, 80px)', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))', marginBottom: '8px' }}>🏎️</div>
+                                        <div style={{ color: '#4CAF50', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold', letterSpacing: '2px' }}>SPEED UP</div>
+                                    </div>
+                                    {/* Bottom Left - Left */}
+                                    <div style={{
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                                        background: 'linear-gradient(135deg, rgba(41, 182, 246, 0.25) 0%, rgba(2, 119, 189, 0.15) 100%)',
+                                        border: '2px solid rgba(41, 182, 246, 0.4)'
+                                    }}>
+                                        <div style={{ fontSize: 'clamp(40px, 10vw, 80px)', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))', marginBottom: '8px' }}>👈</div>
+                                        <div style={{ color: '#4FC3F7', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold', letterSpacing: '2px' }}>LEFT</div>
+                                    </div>
+                                    {/* Bottom Right - Right */}
+                                    <div style={{
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                                        background: 'linear-gradient(135deg, rgba(255, 167, 38, 0.25) 0%, rgba(230, 81, 0, 0.15) 100%)',
+                                        border: '2px solid rgba(255, 167, 38, 0.4)'
+                                    }}>
+                                        <div style={{ fontSize: 'clamp(40px, 10vw, 80px)', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))', marginBottom: '8px' }}>👉</div>
+                                        <div style={{ color: '#FFB74D', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold', letterSpacing: '2px' }}>RIGHT</div>
+                                    </div>
+                                </div>
+
+                                <p style={{
+                                    color: 'rgba(255,255,255,0.6)',
+                                    fontSize: 'clamp(14px, 3vw, 20px)',
+                                    fontWeight: '600',
+                                    letterSpacing: '2px',
+                                    margin: 'clamp(16px, 3vh, 30px) 0 0 0',
+                                    textAlign: 'center',
+                                    animation: 'blink 1.5s infinite'
+                                }}>
+                                    RACE STARTING...
+                                </p>
                             </div>
                         </div>
                     )}
@@ -2738,35 +3061,129 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     overflowY: 'auto',
                 }}>
                     <div style={{
-                        background: 'linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%)',
-                        padding: 'clamp(25px, 5vw, 50px)',
-                        borderRadius: 'clamp(20px, 3vw, 30px)',
+                        background: 'linear-gradient(160deg, #1a1830 0%, #2d2850 50%, #3d3560 100%)',
+                        padding: 'min(3.5vh,30px) min(5vw,36px)',
+                        borderRadius: '24px',
                         textAlign: 'center',
-                        border: 'clamp(3px, 0.5vw, 5px) solid #ff4444',
-                        boxShadow: '0 30px 100px rgba(255,68,68,0.4)',
-                        maxWidth: '95vw',
-                        width: 'clamp(280px, 90vw, 600px)',
+                        border: '3px solid #ff4444',
+                        boxShadow: '0 0 0 1px rgba(255,68,68,0.3), 0 24px 60px rgba(255,68,68,0.5)',
+                        width: 'min(480px, 90vw)',
+                        maxHeight: '92vh',
+                        overflow: 'hidden',
                         animation: 'popIn 0.5s',
+                        boxSizing: 'border-box',
                     }}>
-                        <div style={{ fontSize: 'clamp(40px, 10vw, 70px)', marginBottom: '8px', animation: 'bounce 1s infinite' }}>💥</div>
-                        <h2 style={{ fontSize: 'clamp(28px, 8vw, 45px)', color: '#ff4444', margin: 'clamp(2px, 0.5vh, 5px) 0', textShadow: '0 5px 20px rgba(255,68,68,0.5)', fontWeight: '900' }}>
-                            {t.crash}
-                        </h2>
-                        <div style={{ margin: 'clamp(10px, 2vh, 15px) 0' }}>
-                            <p style={{ fontSize: 'clamp(18px, 5vw, 28px)', margin: 'clamp(5px, 1vh, 10px)', color: '#FFD700', fontWeight: 'bold' }}>{t.score}: <strong style={{ textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong></p>
-                            <p style={{ fontSize: 'clamp(15px, 4vw, 22px)', margin: 'clamp(5px, 1vh, 8px)', color: '#fff' }}>{t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km</strong></p>
-                            <p style={{ fontSize: 'clamp(15px, 4vw, 22px)', margin: 'clamp(5px, 1vh, 8px)', color: '#fff' }}>{t.maxSpeed}: <strong style={{ color: '#FFD700' }}>{Math.floor(speed * 15)} km/h</strong></p>
-                            <p style={{ fontSize: 'clamp(18px, 5vw, 28px)', margin: 'clamp(8px, 1.5vh, 12px)', color: '#FFD700', fontWeight: 'bold' }}>🪙 {t.coins}: +{earnedCoins}</p>
+                        {/* Explosion icon */}
+                        <div style={{ fontSize: 'min(8vh, 56px)', marginBottom: '4px' }}>💥</div>
+
+                        {/* CRASH title */}
+                        <h2 style={{
+                            fontSize: 'min(5vh, 38px)',
+                            color: '#ff4444',
+                            margin: '0 0 min(1.5vh,12px) 0',
+                            fontWeight: '900',
+                            letterSpacing: '2px',
+                            textShadow: '0 4px 16px rgba(255,68,68,0.6)',
+                        }}>{t.crash}</h2>
+
+                        {/* Stats */}
+                        <div style={{ marginBottom: 'min(2vh,16px)' }}>
+                            <p style={{ fontSize: 'min(3.2vh,24px)', margin: '0 0 4px', color: '#FFD700', fontWeight: 'bold' }}>
+                                {t.score}: <strong style={{ textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong>
+                            </p>
+                            <p style={{ fontSize: 'min(2.6vh,19px)', margin: '0 0 4px', color: '#ddd' }}>
+                                {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km</strong>
+                            </p>
+                            <p style={{ fontSize: 'min(2.6vh,19px)', margin: '0 0 4px', color: '#ddd' }}>
+                                {t.maxSpeed}: <strong style={{ color: '#FFD700' }}>{Math.floor(speed * 15)} km/h</strong>
+                            </p>
+                            <p style={{ fontSize: 'min(3vh,22px)', margin: '0', color: '#FFD700', fontWeight: 'bold' }}>
+                                🪙 {t.coins}: +{earnedCoins}
+                            </p>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vh, 12px)', alignItems: 'center' }}>
-                            <button onClick={restart} style={{ padding: 'clamp(10px, 2vh, 16px) clamp(25px, 5vw, 50px)', fontSize: 'clamp(14px, 3vw, 22px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontWeight: '900', boxShadow: '0 10px 30px rgba(102, 126, 234, 0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '280px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                🔄 {t.restart}
+
+                        {/* Buttons */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                            {/* RESTART - blue/purple gradient */}
+                            <button
+                                onClick={restart}
+                                style={{
+                                    width: '150px',
+                                    padding: '9px 12px',
+                                    fontSize: '12px',
+                                    fontWeight: '900',
+                                    letterSpacing: '1px',
+                                    borderRadius: '50px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    color: 'white',
+                                    boxShadow: '0 6px 18px rgba(102,126,234,0.5)',
+                                    transition: 'transform 0.15s, box-shadow 0.15s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 10px 26px rgba(102,126,234,0.7)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 6px 18px rgba(102,126,234,0.5)'; }}
+                            >
+                                🔄 {t.restart.toUpperCase()}
                             </button>
-                            <button onClick={onMapSelect} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                🗺️ {t.mapsButton}
+
+                            {/* MAPS - teal/green gradient */}
+                            <button
+                                onClick={onMapSelect}
+                                style={{
+                                    width: '150px',
+                                    padding: '9px 12px',
+                                    fontSize: '12px',
+                                    fontWeight: '800',
+                                    letterSpacing: '1px',
+                                    borderRadius: '50px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    background: 'linear-gradient(135deg, #11998e 0%, #486152ff 100%)',
+                                    color: 'white',
+                                    boxShadow: '0 5px 15px rgba(17,153,142,0.4)',
+                                    transition: 'transform 0.15s, box-shadow 0.15s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(17,153,142,0.6)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(17,153,142,0.4)'; }}
+                            >
+                                🗺️ {t.mapsButton.toUpperCase()}
                             </button>
-                            <button onClick={onHome} style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(20px, 4vw, 40px)', fontSize: 'clamp(12px, 2.5vw, 18px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '250px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                🏠 {t.home}
+
+                            {/* HOME - orange/red gradient */}
+                            <button
+                                onClick={onHome}
+                                style={{
+                                    width: '150px',
+                                    padding: '9px 12px',
+                                    fontSize: '12px',
+                                    fontWeight: '800',
+                                    letterSpacing: '1px',
+                                    borderRadius: '50px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    background: 'linear-gradient(135deg, #675846ff 0%, #3b2321ff 100%)',
+                                    color: 'white',
+                                    boxShadow: '0 5px 15px rgba(244,67,54,0.4)',
+                                    transition: 'transform 0.15s, box-shadow 0.15s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(244,67,54,0.6)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(244,67,54,0.4)'; }}
+                            >
+                                🏠 {t.home.toUpperCase()}
                             </button>
                         </div>
                     </div>
@@ -2778,6 +3195,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
           0%, 100% { transform: translate(-50%, -50%) scale(1); }
           50% { transform: translate(-50%, -50%) scale(1.1); }
         }
+        @keyframes tutorialPulse {
+          0%, 100% { transform: scale(1); opacity: 0.9; }
+          50% { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
+        }
       `}</style>
         </div>
     );
@@ -2786,7 +3211,15 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 const Home = () => {
     const [screen, setScreen] = useState("home");
     const [selectedMap, setSelectedMap] = useState("highway");
-    const [coins, setCoins] = useState(0);
+    const [coins, setCoins] = useState(() => {
+        const savedCoins = sessionStorage.getItem('collectedCoins');
+        return savedCoins ? parseInt(savedCoins, 10) : 0;
+    });
+
+    useEffect(() => {
+        sessionStorage.setItem('collectedCoins', coins);
+    }, [coins]);
+
     const [settings, setSettings] = useState({
         audioEnabled: true,
         musicEnabled: true,
