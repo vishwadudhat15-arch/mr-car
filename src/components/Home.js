@@ -1523,8 +1523,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     });
 
     const [showSettings, setShowSettings] = useState(false);
-    const [showTouchTutorial, setShowTouchTutorial] = useState(false);
-    const touchTutorialTimerRef = useRef(null);
+
 
     // Resume Handler
     const handleSettingsClose = () => {
