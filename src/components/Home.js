@@ -521,17 +521,20 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                 <div className="title-section" style={{
                     textAlign: 'center',
                     animation: 'fadeIn 1s',
-                    marginBottom: '0px',
+                    marginBottom: 'clamp(5px, 2vh, 20px)',
                     flex: 'shrink',
                     minHeight: 'fit-content',
+                    position: 'relative',
+                    zIndex: 20,
                 }}>
                     <h1 className="title-3d" style={{
-                        fontSize: 'clamp(32px, 10vw, 90px)',
+                        fontSize: 'clamp(42px, 12vw, 100px)',
                         margin: '0',
                         color: '#FFD700',
                         fontWeight: '900',
-                        letterSpacing: 'clamp(1px, 1vw, 8px)',
-                        WebkitTextStroke: '3px #000',
+                        fontFamily: '"Bungee", "Helvetica", sans-serif',
+                        letterSpacing: 'clamp(2px, 2vw, 10px)',
+                        WebkitTextStroke: 'clamp(1px, 0.5vw, 3px) #000',
                         textShadow: [
                             '1px 1px 0 #b8860b',
                             '2px 2px 0 #b8860b',
@@ -544,16 +547,22 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                             '10px 12px 16px rgba(0,0,0,0.7)',
                         ].join(', '),
                         animation: 'titleGlow 2s ease-in-out infinite',
+                        lineHeight: '1.1',
+                        whiteSpace: 'nowrap',
                     }}>
                         {t.title}
                     </h1>
                     <p style={{
-                        fontSize: 'clamp(12px, 3vw, 28px)',
+                        fontSize: 'clamp(14px, 4vw, 32px)',
                         color: '#fff',
-                        fontWeight: 'bold',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                        letterSpacing: 'clamp(1px, 0.5vw, 4px)',
-                        margin: '5px 0 15px 0',
+                        fontWeight: '800',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                        letterSpacing: 'clamp(2px, 1vw, 6px)',
+                        margin: 'clamp(2px, 1vh, 10px) 0 0 0',
+                        textTransform: 'uppercase',
+                        opacity: 0.9,
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        whiteSpace: 'nowrap',
                     }}>
                         {t.subtitle}
                     </p>
@@ -694,22 +703,8 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
           50% { transform: translateY(-10px); }
         }
         @keyframes titleGlow {
-          0%, 100% {
-            text-shadow:
-              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
-              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
-              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
-              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
-              10px 12px 16px rgba(0,0,0,0.7);
-          }
-          50% {
-            text-shadow:
-              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
-              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
-              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
-              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
-              10px 12px 16px rgba(0,0,0,0.9);
-          }
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,215,0,0.2)); }
+          50% { transform: scale(1.03); filter: drop-shadow(0 0 25px rgba(255,215,0,0.5)) brightness(1.1); }
         }
 
         @keyframes badgeRotate {
@@ -736,13 +731,24 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
 
         @media (max-width: 1024px) {
           .title-3d {
-            text-shadow:
-              1px 1px 0 #b8860b,
+            text-shadow: 
+              1px 1px 0 #b8860b, 
+              2px 2px 0 #b8860b,
+              3px 3px 0 #9a7200,
+              5px 6px 10px rgba(0,0,0,0.7) !important;
+            -webkit-text-stroke: 1.5px #000 !important;
+            letter-spacing: 2px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .title-3d {
+            font-size: clamp(40px, 15vw, 60px) !important;
+            text-shadow: 
+              1px 1px 0 #b8860b, 
               2px 2px 0 #9a7200,
-              3px 3px 0 #7a5900,
-              4px 4px 0 #5c4000,
-              6px 8px 10px rgba(0,0,0,0.7) !important;
-            -webkit-text-stroke: 2px #000 !important;
+              4px 5px 8px rgba(0,0,0,0.7) !important;
+            -webkit-text-stroke: 1px #000 !important;
+            letter-spacing: 1px !important;
           }
         }
       `}</style>
