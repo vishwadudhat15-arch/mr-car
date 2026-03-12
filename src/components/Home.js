@@ -450,7 +450,6 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
 
     return (
         <div className="home-container" style={{
-            height: '100vh',
             height: '100dvh', // Use dynamic viewport height
             width: '100vw',
             display: 'flex',

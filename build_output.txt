@@ -1,0 +1,60 @@
+﻿
+> mr-car@0.1.0 build
+> react-scripts build
+
+node.exe : (node:3096) 
+[DEP0176] 
+DeprecationWarning: 
+fs.F_OK is deprecated, 
+use fs.constants.F_OK 
+instead
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:
+\Users\HP\AppData\Roaming\
+npm ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: ((  
+  node:3096) [DE...ts.F   
+ _OK instead:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+(Use `node 
+--trace-deprecation ...` 
+to show where the warning 
+was created)
+Creating an optimized production build...
+Compiled with warnings.
+
+[eslint] 
+src\components\Home.js
+  Line 454:13:  Duplicate key 'height'  no-dupe-keys
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+File sizes after gzip:
+
+  80.72 kB  build\static\js\main.5c33c1ea.js
+  1.76 kB   build\static\js\453.7637750c.chunk.js
+  335 B     build\static\css\main.4b230b21.css
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
