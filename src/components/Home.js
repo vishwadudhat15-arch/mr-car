@@ -1576,7 +1576,6 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
 // WIN POPUP (CHAMPION) - Transparent, Clean Design
 function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang, mapType = 'highway' }) {
     const t = translations[lang];
-    const th = popupThemes[mapType] || popupThemes.highway;
 
     return (
         <div style={{
@@ -1728,7 +1727,6 @@ const Confetti = () => {
 
 function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSettingsChange, lang }) {
     const t = translations[lang];
-    const isMobileInit = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const [screen, setScreen] = useState("tutorial");
 
     const [count, setCount] = useState(3);
@@ -2626,7 +2624,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         if (!overlapsHorizontally && !laneOccupied) {
                             // Slower but consistent enemy speeds
                             const baseEnemySpeed = 3 + Math.random() * 1.5;
-                            const levelSpeedBonus = (s.distance / 10000);
 
                             s.enemies.push({
                                 x: enemyX, y: -150, w: carW, h: carH,
