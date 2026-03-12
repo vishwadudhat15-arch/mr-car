@@ -391,8 +391,53 @@ const RoadPreview = ({ mapId, opacity = 1 }) => {
 };
 
 // HOME SCREEN WITH ENHANCED VISUALS
-function HomeScreen({ onPlay, lang }) {
+function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
     const t = translations[lang];
+
+    const homeThemes = {
+        highway: {
+            bg: 'linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #666 100%)',
+            buildings: [
+                'linear-gradient(180deg, #FF6B6B 0%, #C92A2A 100%)',
+                'linear-gradient(180deg, #4ECDC4 0%, #1A535C 100%)',
+                'linear-gradient(180deg, #FFE66D 0%, #FF6B35 100%)',
+                'linear-gradient(180deg, #A8DADC 0%, #457B9D 100%)',
+                'linear-gradient(180deg, #F1FAEE 0%, #1D3557 100%)'
+            ]
+        },
+        city: {
+            bg: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            buildings: ['#4b0082', '#8a2be2', '#9932cc', '#9400d3', '#800080']
+        },
+        desert: {
+            bg: 'linear-gradient(180deg, #fa709a 0%, #fee140 50%, #8B7355 100%)',
+            buildings: ['#d2b48c', '#cd853f', '#deb887', '#bc8f8f', '#8b4513']
+        },
+        snow: {
+            bg: 'linear-gradient(180deg, #a8edea 0%, #fed6e3 50%, #404040 100%)',
+            buildings: ['#e0f7fa', '#b2ebf2', '#80deea', '#4dd0e1', '#26c6da']
+        },
+        night: {
+            bg: 'linear-gradient(180deg, #050510 0%, #0a0a1a 50%, #1a1a1a 100%)',
+            buildings: ['#1c1c1c', '#2c2c2c', '#3c3c3c', '#4c4c4c', '#5c5c5c']
+        },
+        jungle: {
+            bg: 'linear-gradient(180deg, #11998e 0%, #38ef7d 50%, #654321 100%)',
+            buildings: ['#2d5a27', '#1e392a', '#4a7c44', '#0b3d1b', '#355e3b']
+        },
+        beach: {
+            bg: 'linear-gradient(180deg, #4facfe 0%, #00f2fe 50%, #F4A460 100%)',
+            buildings: ['#fff8dc', '#faebd7', '#ffdead', '#f5deb3', '#ffe4b5']
+        },
+        mountain: {
+            bg: 'linear-gradient(180deg, #8e9eab 0%, #eef2f3 50%, #696969 100%)',
+            buildings: ['#546e7a', '#455a64', '#37474f', '#263238', '#212121']
+        }
+    };
+
+    // Force Home screen to always use the default 'highway' colors, regardless of selected map
+    const theme = homeThemes['highway'];
+
     const [screenSize, setScreenSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
     useEffect(() => {
@@ -411,7 +456,7 @@ function HomeScreen({ onPlay, lang }) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #666 100%)',
+            background: theme.bg,
             position: 'fixed',
             top: 0,
             left: 0,
@@ -434,11 +479,11 @@ function HomeScreen({ onPlay, lang }) {
                 justifyContent: 'space-around',
                 zIndex: 1,
             }}>
-                <div className="building building-1" style={{ width: '120px', height: '250px', background: 'linear-gradient(180deg, #FF6B6B 0%, #C92A2A 100%)', borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
-                <div className="building building-2" style={{ width: '100px', height: '180px', background: 'linear-gradient(180deg, #4ECDC4 0%, #1A535C 100%)', borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
-                <div className="building building-3" style={{ width: '140px', height: '300px', background: 'linear-gradient(180deg, #FFE66D 0%, #FF6B35 100%)', borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
-                <div className="building building-4" style={{ width: '110px', height: '220px', background: 'linear-gradient(180deg, #A8DADC 0%, #457B9D 100%)', borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
-                <div className="building building-5" style={{ width: '130px', height: '270px', background: 'linear-gradient(180deg, #F1FAEE 0%, #1D3557 100%)', borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
+                <div className="building building-1" style={{ width: '120px', height: '250px', background: theme.buildings[0], borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
+                <div className="building building-2" style={{ width: '100px', height: '180px', background: theme.buildings[1], borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
+                <div className="building building-3" style={{ width: '140px', height: '300px', background: theme.buildings[2], borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
+                <div className="building building-4" style={{ width: '110px', height: '220px', background: theme.buildings[3], borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
+                <div className="building building-5" style={{ width: '130px', height: '270px', background: theme.buildings[4], borderRadius: '10px 10px 0 0', boxShadow: '0 5px 20px rgba(0,0,0,0.3)' }}></div>
             </div>
 
             <div className="road" style={{
@@ -1345,169 +1390,346 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
     );
 }
 
-// CONGRATULATIONS POPUP - shown at each 100km milestone
-function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang }) {
+// PER-MAP THEME CONFIG FOR POPUPS
+const popupThemes = {
+    highway: {
+        primary: '#00E5FF', // Neon Cyan (Replacing Red)
+        secondary: '#00B8D4',
+        glow: 'rgba(0, 229, 255, 0.4)',
+        icon: '💥',
+        accent: '#FFFFFF'
+    },
+    city: {
+        primary: '#3742FA', // Vibrant Blue
+        secondary: '#5352ED',
+        glow: 'rgba(55, 66, 250, 0.4)',
+        icon: '🏙️',
+        accent: '#FFFFFF'
+    },
+    desert: {
+        primary: '#FFA502', // Vibrant Orange
+        secondary: '#FF7F50',
+        glow: 'rgba(255, 165, 2, 0.4)',
+        icon: '🏜️',
+        accent: '#FFFFFF'
+    },
+    snow: {
+        primary: '#2F3542', // Deep Slate/Blue
+        secondary: '#57606F',
+        glow: 'rgba(47, 53, 66, 0.4)',
+        icon: '❄️',
+        accent: '#FFFFFF'
+    },
+    night: {
+        primary: '#2F3542', // Deep Midnight
+        secondary: '#1E2229',
+        glow: 'rgba(47, 53, 66, 0.4)',
+        icon: '🌙',
+        accent: '#FFFFFF'
+    },
+    jungle: {
+        primary: '#2ED573', // Vibrant Green
+        secondary: '#7BED9F',
+        glow: 'rgba(46, 213, 115, 0.4)',
+        icon: '🌴',
+        accent: '#FFFFFF'
+    },
+    beach: {
+        primary: '#1E90FF', // Dodge Blue
+        secondary: '#70A1FF',
+        glow: 'rgba(30, 144, 255, 0.4)',
+        icon: '🌊',
+        accent: '#FFFFFF'
+    },
+    mountain: {
+        primary: '#57606F', // Cool Grey
+        secondary: '#2F3542',
+        glow: 'rgba(87, 96, 111, 0.4)',
+        icon: '⛰️',
+        accent: '#FFFFFF'
+    }
+};
+
+// CONGRATULATIONS POPUP - Transparent, Clean Design
+function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang, mapType = 'highway' }) {
     const t = translations[lang];
     const kmCompleted = level * 100;
     const isLastLevel = level >= 5;
+    const th = popupThemes[mapType] || popupThemes.highway;
 
     return (
         <div style={{
-            position: 'fixed',
-            top: 0, left: 0,
+            position: 'fixed', top: 0, left: 0,
             width: '100vw', height: '100vh',
-            background: 'rgba(0,0,0,0.88)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            animation: 'fadeIn 0.3s',
-            padding: '12px',
-            boxSizing: 'border-box',
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(15px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 4000,
+            fontFamily: '"Bungee", "Helvetica", sans-serif'
         }}>
+            {/* Victory Rays Background */}
             <div style={{
-                background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 60%, #FFD700 100%)',
-                padding: 'min(3vh, 28px) min(4vw, 32px)',
-                borderRadius: '20px',
-                textAlign: 'center',
-                border: '3px solid #FFD700',
-                boxShadow: '0 20px 60px rgba(56,239,125,0.5)',
-                width: 'min(520px, 92vw)',
-                maxHeight: '92vh',
-                overflow: 'hidden',
-                animation: 'popIn 0.5s',
-                boxSizing: 'border-box',
+                position: 'absolute',
+                width: '150vh', height: '150vh',
+                background: `conic-gradient(from 0deg, transparent 0% 10%, ${th.primary}44 10% 20%, transparent 20% 30%, ${th.primary}44 30% 40%, transparent 40% 50%, ${th.primary}44 50% 60%, transparent 60% 70%, ${th.primary}44 70% 80%, transparent 80% 90%, ${th.primary}44 90% 100%)`,
+                animation: 'spinRays 20s linear infinite',
+                zIndex: -1,
+                opacity: 0.6
+            }}></div>
+
+            <div style={{
+                position: 'relative',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '40px 30px',
+                width: 'min(90%, 420px)',
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(30px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderTop: `4px solid ${th.primary}`,
+                borderRadius: '32px',
+                boxShadow: `0 30px 60px rgba(0,0,0,0.3), 0 0 40px ${th.primary}22`,
+                animation: 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}>
-                <div style={{ fontSize: 'min(7vh, 52px)', marginBottom: '4px', animation: 'bounce 1s infinite' }}>🎉</div>
-                <h2 style={{ fontSize: 'min(4vh, 32px)', color: '#fff', margin: '4px 0', textShadow: '0 3px 15px rgba(0,0,0,0.5)', fontWeight: '900' }}>
+                {/* Trophy with Glow */}
+                <div style={{
+                    fontSize: '80px',
+                    marginBottom: '15px',
+                    filter: `drop-shadow(0 0 20px ${th.primary})`,
+                    animation: 'bounceTrophy 2s ease-in-out infinite'
+                }}>🏅</div>
+
+                <h1 style={{
+                    fontSize: 'clamp(24px, 6vw, 38px)',
+                    fontWeight: '900',
+                    color: '#FFF',
+                    margin: '0 0 5px 0',
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    textShadow: `0 0 10px ${th.primary}aa`
+                }}>
                     {t.congratulations}
-                </h2>
-                <div style={{ margin: '6px 0' }}>
-                    <p style={{ fontSize: 'min(3.5vh, 24px)', margin: '4px 0', color: '#fff', fontWeight: 'bold' }}>
-                        🏁 {kmCompleted} km {t.levelComplete}
-                    </p>
-                    <p style={{ fontSize: 'min(3vh, 20px)', margin: '4px 0', color: '#FFD700', fontWeight: 'bold' }}>
-                        🪙 {t.coins}: +{coins}
-                    </p>
-                    {!isLastLevel && (
-                        <p style={{ fontSize: 'min(2.5vh, 16px)', margin: '4px 0', color: '#fff', opacity: 0.9 }}>
-                            🎯 Next: {(level + 1) * 100} km
-                        </p>
-                    )}
+                </h1>
+
+
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '20px',
+                    width: '100%',
+                    marginBottom: '40px'
+                }}>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.primary}` }}>
+                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>MILESTONE</div>
+                        <div style={{ fontSize: '24px', color: '#FFF', fontWeight: 'bold' }}>{kmCompleted}km</div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.secondary}` }}>
+                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>REWARD</div>
+                        <div style={{ fontSize: '24px', color: th.primary, fontWeight: 'bold' }}>🪙 {coins}</div>
+                    </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
-                    {!isLastLevel && (
-                        <button
-                            onClick={onStart}
-                            style={{ padding: 'min(1.8vh,14px) min(4vw,40px)', fontSize: 'min(2.8vh,20px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#000', fontWeight: '900', boxShadow: '0 8px 24px rgba(255,215,0,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '260px' }}
-                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
-                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                        >
-                            🚀 {t.start}
-                        </button>
-                    )}
-                    {isLastLevel && (
-                        <button
-                            onClick={onStart}
-                            style={{ padding: 'min(1.8vh,14px) min(4vw,40px)', fontSize: 'min(2.8vh,20px)', borderRadius: '50px', border: '3px solid #FFD700', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: '#fff', fontWeight: '900', boxShadow: '0 8px 24px rgba(245,87,108,0.5)', transition: 'transform 0.2s', width: '100%', maxWidth: '260px' }}
-                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.07)'}
-                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                        >
-                            🎮 {t.playAgain}
-                        </button>
-                    )}
-                    <button onClick={onMapSelect} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.4)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                        🗺️ {t.mapsButton}
+
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <button onClick={onStart} style={{
+                        width: '100%', padding: '18px',
+                        background: `linear-gradient(to bottom, ${th.primary}, ${th.primary}dd)`,
+                        border: 'none',
+                        color: '#000',
+                        fontSize: '20px',
+                        fontWeight: '900',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        boxShadow: `0 6px 0 ${th.primary}66`,
+                        transition: 'all 0.1s active',
+                        textTransform: 'uppercase'
+                    }}
+                        onMouseDown={e => e.currentTarget.style.transform = 'translateY(3px)'}
+                        onMouseUp={e => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                        {isLastLevel ? t.playAgain : t.start}
                     </button>
-                    <button onClick={onHome} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'rgba(0,0,0,0.3)', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                        🏠 {t.home}
-                    </button>
+
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={onMapSelect} style={{
+                            flex: 1, padding: '14px',
+                            background: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)',
+                            color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
+                        }}>{t.mapsButton}</button>
+                        <button onClick={onHome} style={{
+                            flex: 1, padding: '14px',
+                            background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.1)',
+                            color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
+                        }}>{t.home}</button>
+                    </div>
                 </div>
             </div>
+
             <style>{`
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-      `}</style>
+                @keyframes spinRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                @keyframes bounceTrophy { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+            `}</style>
         </div>
     );
 }
 
-// WIN POPUP - shown only when all 5 levels (500km) are done
-function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang }) {
+// WIN POPUP (CHAMPION) - Transparent, Clean Design
+function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang, mapType = 'highway' }) {
     const t = translations[lang];
+    const th = popupThemes[mapType] || popupThemes.highway;
 
     return (
         <div style={{
-            position: 'fixed',
-            top: 0, left: 0,
+            position: 'fixed', top: 0, left: 0,
             width: '100vw', height: '100vh',
-            background: 'rgba(0,0,0,0.9)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            animation: 'fadeIn 0.3s',
-            padding: '12px',
-            boxSizing: 'border-box',
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(20px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 5000,
+            fontFamily: '"Bungee", "Helvetica", sans-serif'
         }}>
+            <Confetti />
+
             <div style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                padding: 'min(3vh, 28px) min(4vw, 32px)',
-                borderRadius: '20px',
-                textAlign: 'center',
-                border: '3px solid #FFD700',
-                boxShadow: '0 20px 60px rgba(255,215,0,0.5)',
-                width: 'min(540px, 92vw)',
-                maxHeight: '92vh',
-                overflow: 'hidden',
-                animation: 'popIn 0.5s',
-                boxSizing: 'border-box',
+                position: 'relative',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '35px 25px',
+                width: 'min(85%, 380px)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(40px)',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
+                borderRadius: '40px',
+                boxShadow: '0 40px 100px rgba(0,0,0,0.5)',
+                animation: 'victorySlide 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
-                <div style={{ fontSize: 'min(7vh, 52px)', marginBottom: 'min(1vh,8px)', animation: 'bounce 1s infinite' }}>⭐🪙</div>
-                <h2 style={{ fontSize: 'min(4vh, 34px)', color: '#FFD700', margin: 'min(0.5vh,4px) 0', textShadow: '0 5px 20px rgba(0,0,0,0.5)' }}>
+                <div style={{ fontSize: '80px', marginBottom: '5px', filter: 'drop-shadow(0 0 30px gold)' }}>🏆</div>
+
+                <h1 style={{
+                    fontSize: 'clamp(28px, 8vw, 48px)',
+                    fontWeight: '900',
+                    color: 'gold',
+                    margin: '0',
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: '4px',
+                    textShadow: '3px 3px 0px #000'
+                }}>
                     {t.champion}
-                </h2>
-                <div style={{ margin: 'min(1vh,8px) 0' }}>
-                    <p style={{ fontSize: 'min(3vh,22px)', margin: 'min(1vh,8px) 0', color: '#FFD700' }}>
-                        {t.score}: <strong style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong>
-                    </p>
-                    <p style={{ fontSize: 'min(2.7vh,19px)', margin: 'min(1vh,8px) 0', color: 'white' }}>
-                        {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km / 500km</strong>
-                    </p>
-                    <p style={{ fontSize: 'min(3vh,22px)', margin: 'min(1vh,8px) 0', color: '#FFD700', fontWeight: 'bold' }}>
-                        🪙 {t.coins}: +{coins}
-                    </p>
+                </h1>
+
+                <p style={{
+                    fontSize: '14px',
+                    color: '#FFF',
+                    letterSpacing: '5px',
+                    margin: '8px 0 25px 0',
+                    fontWeight: 'bold',
+                    opacity: 0.7
+                }}>
+                    WORLD CHAMPION
+                </p>
+
+                <div style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '24px',
+                    padding: '25px 20px',
+                    marginBottom: '35px',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '15px'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>TOTAL SCORE</span>
+                        <span style={{ color: 'gold', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(255, 215, 0, 0.3)' }}>{score}</span>
+                    </div>
+
+                    <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>MILESTONES</span>
+                        <span style={{ color: '#FFF', fontSize: '22px', fontWeight: '950' }}>500km</span>
+                    </div>
+
+                    <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>BONUS COINS</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '20px' }}>🪙</span>
+                            <span style={{ color: '#00E5FF', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>{coins}</span>
+                        </div>
+                    </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '7px', alignItems: 'center' }}>
-                    <button onClick={onRestart} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(245,87,108,0.4)', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                        🎮 {t.playAgain}
+
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <button onClick={onRestart} style={{
+                        width: '100%', padding: '22px',
+                        background: 'linear-gradient(to bottom, gold, #DAA520)',
+                        border: 'none', color: '#000',
+                        fontSize: '24px', fontWeight: '900',
+                        borderRadius: '16px', cursor: 'pointer',
+                        boxShadow: '0 8px 0 #B8860B'
+                    }}>
+                        {t.playAgain}
                     </button>
-                    <button onClick={onMapSelect} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#555', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                        🗺️ {t.mapsButton}
-                    </button>
-                    <button onClick={onHome} style={{ padding: 'min(1.4vh,12px) min(3.5vw,34px)', fontSize: 'min(2.4vh,17px)', borderRadius: '50px', border: 'none', cursor: 'pointer', background: '#333', color: 'white', fontWeight: 'bold', transition: 'transform 0.2s', width: '100%', maxWidth: '240px' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                        🏠 {t.home}
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>MAPS</button>
+                        <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>HOME</button>
+                    </div>
                 </div>
             </div>
+
             <style>{`
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-      `}</style>
+                @keyframes victorySlide { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            `}</style>
+        </div>
+    );
+}
+
+// Simple CSS Confetti Component
+const Confetti = () => {
+    return (
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'hidden' }}>
+            {[...Array(30)].map((_, i) => {
+                const colors = ['gold', '#FFD700', '#FFBD33', '#FF5733'];
+                const left = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const size = 5 + Math.random() * 10;
+                return (
+                    <div key={i} style={{
+                        position: 'absolute',
+                        top: '-20px',
+                        left: `${left}%`,
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        background: colors[i % colors.length],
+                        borderRadius: i % 2 === 0 ? '50%' : '2px',
+                        animation: `confettiFall 5s linear infinite ${delay}s`,
+                        opacity: 0.8
+                    }}></div>
+                );
+            })}
+            <style>{`
+                @keyframes confettiFall {
+                    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+                }
+            `}</style>
         </div>
     );
 }
 
 
 // GAME COMPONENT WITH PROPER CAR ENGINE SOUND
-let tutorialShown = false; // Tracks if tutorial has been shown this session
+// tutorialShown flag removed.
+
+
 
 function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSettingsChange, lang }) {
     const t = translations[lang];
     const isMobileInit = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const [screen, setScreen] = useState((isMobileInit && !tutorialShown) ? "tutorial" : "countdown");
+    const [screen, setScreen] = useState("tutorial");
 
     const [count, setCount] = useState(3);
     const [distance, setDistance] = useState(0);
@@ -1553,14 +1775,13 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         carX: 0,
         enemies: [],
         coins: [],
-        score: 0,
-        earnedCoins: 0,
+        coinsThisLevel: 0,
         keys: {},
         roadOffset: 0,
         touchStartX: null,
         touchStartY: null, // Track Y for speed control
         touchDirection: null,
-        _levelTarget: 10000, // first milestone = 100km
+        _levelTarget: 10000,
     });
 
     const [canvasSize, setCanvasSize] = useState({
@@ -1732,7 +1953,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     // Tutorial auto-advance logic
     useEffect(() => {
         if (screen === "tutorial") {
-            tutorialShown = true;
             const timer = setTimeout(() => {
                 setScreen("countdown");
             }, 3000);
@@ -2287,9 +2507,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
             }
 
-            // Draw finish line ONLY at 500km (50000 distance units) - the final milestone
+            // Draw finish line ONLY at the final milestone (300000 distance units = 500km)
             {
-                const finalTarget = 50000;
+                const finalTarget = 300000;
                 const approachStart = finalTarget - 1000;
                 if (s.distance > approachStart && s.distance < finalTarget + 500) {
                     const finishY = H - ((s.distance - approachStart) * 0.3);
@@ -2335,9 +2555,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
             if (screen === "play") {
                 if (s.keys['ArrowUp'] || s.keys['w'] || s.keys['W'] || s.touchDirection === 'up') {
-                    s.targetSpeed = Math.min(s.targetSpeed + 0.15, 10);
+                    s.targetSpeed = Math.min(s.targetSpeed + 0.15, 10); // Standard speed
                 } else if (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down') {
-                    s.targetSpeed = Math.max(s.targetSpeed - 0.2, 2);
+                    s.targetSpeed = Math.max(s.targetSpeed - 0.25, 2);
                 } else {
                     if (s.targetSpeed > 5) {
                         s.targetSpeed = Math.max(s.targetSpeed - 0.1, 5);
@@ -2353,14 +2573,16 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 setDistance(s.distance);
                 setSpeed(s.speed);
 
-                // Milestone check: each 100km = 10000 distance units
+                // Milestone check: 10000 units = 100km
                 const levelTarget = s._levelTarget || 10000;
                 if (s.distance >= levelTarget) {
                     const completedLevel = Math.round(levelTarget / 10000);
-                    setScore(prev => prev + Math.floor(s.earnedCoins * 5));
-                    setEarnedCoins(s.earnedCoins);
-                    setCoins(prev => prev + s.earnedCoins);
-                    s.earnedCoins = 0; // reset for next level
+                    // Level bonus based on coins collected in THIS level
+                    const levelBonus = Math.floor((s.coinsThisLevel || 0) * 5);
+                    s.score += levelBonus;
+                    setScore(s.score);
+
+                    s.coinsThisLevel = 0; // reset for next milestone scoring
                     setCurrentLevel(completedLevel);
                     if (completedLevel >= 5) {
                         // All 500km done - show final win popup
@@ -2376,7 +2598,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     return;
                 }
 
-                if (Math.random() < 0.07) {
+                // BALANCED TRAFFIC MODE: Slightly lower spawn rate for "thoda easy" feel
+                if (Math.random() < 0.11) {
                     const slot = Math.floor(Math.random() * 5); // 0,2,4=lanes, 1,3=markers
                     const enemyColors = ['#4169E1', '#FF1493', '#32CD32', '#FF8C00', '#9370DB', '#00CED1'];
 
@@ -2395,16 +2618,21 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     // Stricter spacing to ensure "sabhi car saath me nahi aani chahiye"
                     const topEnemies = s.enemies.filter(e => e.y < 350);
 
-                    // logic: don't block more than 2 slots at top, and ensure horizontal staggering
+                    // logic: limit to 2 enemies at top to prevent impossible walls
                     if (topEnemies.length < 2) {
-                        const overlapsHorizontally = topEnemies.some(e => Math.abs(e.x - enemyX) < (carW * 2.2));
+                        const overlapsHorizontally = topEnemies.some(e => Math.abs(e.x - enemyX) < (carW * 2.0));
                         const laneOccupied = s.enemies.some(e => Math.abs(e.x - enemyX) < (carW * 1.5) && e.y < 450);
 
                         if (!overlapsHorizontally && !laneOccupied) {
+                            // Slower but consistent enemy speeds
+                            const baseEnemySpeed = 3 + Math.random() * 1.5;
+                            const levelSpeedBonus = (s.distance / 10000);
+
                             s.enemies.push({
                                 x: enemyX, y: -150, w: carW, h: carH,
                                 color: enemyColors[Math.floor(Math.random() * enemyColors.length)],
-                                passed: false, isOpposite: isOpp, speed: 1 + Math.random() * 2,
+                                passed: false, isOpposite: isOpp,
+                                speed: baseEnemySpeed,
                             });
                         }
                     }
@@ -2424,7 +2652,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, c)) {
                         c.collected = true;
                         s.earnedCoins += 1;
+                        s.coinsThisLevel = (s.coinsThisLevel || 0) + 1;
                         setEarnedCoins(s.earnedCoins);
+                        setCoins(prev => prev + 1); // Real-time cumulative balance
                     }
                 });
                 s.coins = s.coins.filter(c => !c.collected && c.y < H + 100);
@@ -2447,7 +2677,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, e)) {
                         setScore(s.score);
                         setEarnedCoins(s.earnedCoins);
-                        setCoins(prev => prev + s.earnedCoins);
                         setScreen("gameover");
                         return;
                     }
@@ -2464,7 +2693,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 if (s.carX < roadLeft + 2 || s.carX + carW > roadRight - 2) {
                     setScore(s.score);
                     setEarnedCoins(s.earnedCoins);
-                    setCoins(prev => prev + s.earnedCoins);
                     setScreen("gameover");
                     return;
                 }
@@ -2607,11 +2835,12 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             coins: [],
             score: 0,
             earnedCoins: 0,
+            coinsThisLevel: 0,
             keys: {},
             roadOffset: 0,
             touchStartX: null,
             touchDirection: null,
-            _levelTarget: 10000, // reset to first 100km milestone
+            _levelTarget: 10000,
         };
         setDistance(0);
         setSpeed(0);
@@ -2621,7 +2850,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         setShowWinPopup(false);
         setShowCongrats(false);
         setCurrentLevel(1);
-        setScreen((isMobile && !tutorialShown) ? "tutorial" : "countdown");
+        setScreen("tutorial");
     };
 
     // Continue to next level after Congratulations popup - preserve car & road state
@@ -2634,9 +2863,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         s.keys = {};
         s.touchDirection = null;
         setShowCongrats(false);
-        setEarnedCoins(0);
+        s.coinsThisLevel = 0;
         setCount(3);
-        setScreen((isMobile && !tutorialShown) ? "tutorial" : "countdown");
+        setScreen("countdown");
     };
 
 
@@ -2663,6 +2892,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     onMapSelect={onMapSelect}
                     onHome={onHome}
                     lang={lang}
+                    mapType={mapType}
                 />
             )}
 
@@ -2675,6 +2905,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     onMapSelect={onMapSelect}
                     onHome={onHome}
                     lang={lang}
+                    mapType={mapType}
                 />
             )}
 
@@ -3045,147 +3276,144 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             {screen === "gameover" && (
                 <div style={{
                     position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    background: 'rgba(0,0,0,0.85)',
+                    top: 0, left: 0,
+                    width: '100vw', height: '100vh',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(25px)',
+                    zIndex: 4000,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000,
-                    animation: 'fadeIn 0.3s',
-                    padding: 'clamp(10px, 3vw, 20px)',
-                    boxSizing: 'border-box',
-                    overflowY: 'auto',
+                    fontFamily: '"Bungee", "Helvetica", sans-serif'
                 }}>
+                    {/* Background Danger Glow */}
                     <div style={{
-                        background: 'linear-gradient(160deg, #1a1830 0%, #2d2850 50%, #3d3560 100%)',
-                        padding: 'min(3.5vh,30px) min(5vw,36px)',
-                        borderRadius: '24px',
-                        textAlign: 'center',
-                        border: '3px solid #ff4444',
-                        boxShadow: '0 0 0 1px rgba(255,68,68,0.3), 0 24px 60px rgba(255,68,68,0.5)',
-                        width: 'min(480px, 90vw)',
-                        maxHeight: '92vh',
-                        overflow: 'hidden',
-                        animation: 'popIn 0.5s',
-                        boxSizing: 'border-box',
+                        position: 'absolute',
+                        width: '100%', height: '100%',
+                        background: `radial-gradient(circle, ${(popupThemes[mapType] || popupThemes.highway).primary}33 0%, transparent 70%)`,
+                        animation: 'pulseDanger 1.5s infinite alternate',
+                        zIndex: 0
+                    }}></div>
+
+                    {/* Main UI Card */}
+                    <div style={{
+                        position: 'relative',
+                        zIndex: 1,
+                        width: 'min(90%, 450px)',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(40px)',
+                        border: `1px solid rgba(255, 255, 255, 0.1)`,
+                        borderTop: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}`,
+                        borderRadius: '32px',
+                        padding: '40px 30px',
+                        boxShadow: `0 50px 100px rgba(0,0,0,0.5)`,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        animation: 'crashIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28)'
                     }}>
-                        {/* Explosion icon */}
-                        <div style={{ fontSize: 'min(8vh, 56px)', marginBottom: '4px' }}>💥</div>
-
-                        {/* CRASH title */}
-                        <h2 style={{
-                            fontSize: 'min(5vh, 38px)',
-                            color: '#ff4444',
-                            margin: '0 0 min(1.5vh,12px) 0',
-                            fontWeight: '900',
-                            letterSpacing: '2px',
-                            textShadow: '0 4px 16px rgba(255,68,68,0.6)',
-                        }}>{t.crash}</h2>
-
-                        {/* Stats */}
-                        <div style={{ marginBottom: 'min(2vh,16px)' }}>
-                            <p style={{ fontSize: 'min(3.2vh,24px)', margin: '0 0 4px', color: '#FFD700', fontWeight: 'bold' }}>
-                                {t.score}: <strong style={{ textShadow: '0 0 10px rgba(255,215,0,0.8)' }}>{score}</strong>
-                            </p>
-                            <p style={{ fontSize: 'min(2.6vh,19px)', margin: '0 0 4px', color: '#ddd' }}>
-                                {t.distance}: <strong style={{ color: '#FFD700' }}>{Math.floor(distance / 100)}km</strong>
-                            </p>
-                            <p style={{ fontSize: 'min(2.6vh,19px)', margin: '0 0 4px', color: '#ddd' }}>
-                                {t.maxSpeed}: <strong style={{ color: '#FFD700' }}>{Math.floor(speed * 15)} km/h</strong>
-                            </p>
-                            <p style={{ fontSize: 'min(3vh,22px)', margin: '0', color: '#FFD700', fontWeight: 'bold' }}>
-                                🪙 {t.coins}: +{earnedCoins}
-                            </p>
+                        {/* Map Icon Badge */}
+                        <div style={{
+                            width: '90px',
+                            height: '90px',
+                            background: `linear-gradient(135deg, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '48px',
+                            marginBottom: '20px',
+                            border: `4px solid ${(popupThemes[mapType] || popupThemes.highway).accent}44`,
+                            animation: 'shakeIcon 3s infinite'
+                        }}>
+                            {(popupThemes[mapType] || popupThemes.highway).icon}
                         </div>
 
-                        {/* Buttons */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
-                            {/* RESTART - blue/purple gradient */}
+                        <h1 style={{
+                            fontSize: 'clamp(44px, 12vw, 70px)',
+                            fontWeight: '950',
+                            margin: '0',
+                            color: '#FFF',
+                            textTransform: 'uppercase',
+                            letterSpacing: '2px',
+                            textAlign: 'center',
+                            textShadow: `0 0 20px ${(popupThemes[mapType] || popupThemes.highway).primary}aa`,
+                            animation: 'glitchText 2s infinite'
+                        }}>
+                            {t.crash}
+                        </h1>
+
+                        <p style={{
+                            color: 'rgba(255,255,255,0.5)',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            letterSpacing: '5px',
+                            margin: '5px 0 35px 0',
+                            textTransform: 'uppercase'
+                        }}>
+                            CAR REPAIR NEEDED
+                        </p>
+
+                        {/* Stats Row */}
+                        <div style={{
+                            width: '100%',
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: '15px',
+                            marginBottom: '40px'
+                        }}>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}` }}>
+                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>FINAL SCORE</div>
+                                <div style={{ fontSize: '28px', color: '#FFF', fontWeight: 'black' }}>{score}</div>
+                            </div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid #FFD700` }}>
+                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>COINS LOST</div>
+                                <div style={{ fontSize: '28px', color: '#FFD700', fontWeight: 'black' }}>🪙 {earnedCoins}</div>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             <button
                                 onClick={restart}
                                 style={{
-                                    width: '150px',
-                                    padding: '9px 12px',
-                                    fontSize: '12px',
+                                    width: '100%',
+                                    padding: '20px',
+                                    background: `linear-gradient(to bottom, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    color: (popupThemes[mapType] || popupThemes.highway).accent,
+                                    fontSize: '22px',
                                     fontWeight: '900',
-                                    letterSpacing: '1px',
-                                    borderRadius: '50px',
-                                    border: 'none',
                                     cursor: 'pointer',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    color: 'white',
-                                    boxShadow: '0 6px 18px rgba(102,126,234,0.5)',
-                                    transition: 'transform 0.15s, box-shadow 0.15s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
+                                    boxShadow: `0 6px 0 ${(popupThemes[mapType] || popupThemes.highway).primary}88`,
+                                    transition: 'transform 0.1s'
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 10px 26px rgba(102,126,234,0.7)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 6px 18px rgba(102,126,234,0.5)'; }}
+                                onMouseDown={e => e.currentTarget.style.transform = 'translateY(3px)'}
+                                onMouseUp={e => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                🔄 {t.restart.toUpperCase()}
+                                {t.restart.toUpperCase()}
                             </button>
 
-                            {/* MAPS - teal/green gradient */}
-                            <button
-                                onClick={onMapSelect}
-                                style={{
-                                    width: '150px',
-                                    padding: '9px 12px',
-                                    fontSize: '12px',
-                                    fontWeight: '800',
-                                    letterSpacing: '1px',
-                                    borderRadius: '50px',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    background: 'linear-gradient(135deg, #11998e 0%, #486152ff 100%)',
-                                    color: 'white',
-                                    boxShadow: '0 5px 15px rgba(17,153,142,0.4)',
-                                    transition: 'transform 0.15s, box-shadow 0.15s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(17,153,142,0.6)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(17,153,142,0.4)'; }}
-                            >
-                                🗺️ {t.mapsButton.toUpperCase()}
-                            </button>
-
-                            {/* HOME - orange/red gradient */}
-                            <button
-                                onClick={onHome}
-                                style={{
-                                    width: '150px',
-                                    padding: '9px 12px',
-                                    fontSize: '12px',
-                                    fontWeight: '800',
-                                    letterSpacing: '1px',
-                                    borderRadius: '50px',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    background: 'linear-gradient(135deg, #675846ff 0%, #3b2321ff 100%)',
-                                    color: 'white',
-                                    boxShadow: '0 5px 15px rgba(244,67,54,0.4)',
-                                    transition: 'transform 0.15s, box-shadow 0.15s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(244,67,54,0.6)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(244,67,54,0.4)'; }}
-                            >
-                                🏠 {t.home.toUpperCase()}
-                            </button>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.mapsButton}</button>
+                                <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.home}</button>
+                            </div>
                         </div>
                     </div>
+
+                    <style>{`
+                        @keyframes pulseDanger { from { opacity: 0.3; } to { opacity: 0.7; } }
+                        @keyframes crashIn { from { transform: scale(1.5) rotate(5deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+                        @keyframes shakeIcon { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
+                        @keyframes glitchText {
+                            0% { transform: skew(0deg); }
+                            20% { transform: skew(3deg); }
+                            30% { transform: skew(-3deg); }
+                            40% { transform: skew(0deg); }
+                            100% { transform: skew(0deg); }
+                        }
+                    `}</style>
                 </div>
             )}
 
@@ -3232,7 +3460,7 @@ const Home = () => {
 
     return (
         <>
-            {screen === "home" && <HomeScreen onPlay={() => setScreen("mapselect")} lang={settings.language} />}
+            {screen === "home" && <HomeScreen onPlay={() => setScreen("mapselect")} lang={settings.language} mapId={selectedMap} />}
             {screen === "mapselect" && (
                 <MapSelection
                     onSelectMap={handleSelectMap}
