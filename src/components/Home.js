@@ -451,6 +451,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
     return (
         <div className="home-container" style={{
             height: '100vh',
+            height: '100dvh', // Use dynamic viewport height
             width: '100vw',
             display: 'flex',
             flexDirection: 'column',
@@ -515,8 +516,9 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                 justifyContent: 'center',
                 zIndex: 10,
                 flex: 1,
-                maxHeight: 'calc(100vh - 140px)',
+                maxHeight: 'calc(100vh - 200px)', // Reduced to give more space at bottom
                 overflow: 'hidden',
+                width: '100%',
             }}>
                 <div className="title-section" style={{
                     textAlign: 'center',
@@ -618,7 +620,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             </div>
 
             <div className="play-button-container" style={{
-                marginBottom: 'clamp(20px, 8vh, 80px)',
+                marginBottom: 'clamp(50px, 15vh, 120px)', // Increased margin to lift button up
                 zIndex: 10,
                 position: 'relative',
                 width: '100%',
@@ -632,7 +634,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             }}>
                 <div className="free-badge" style={{
                     position: 'absolute',
-                    top: screenSize.width < 768 ? '30px' : '15px', // Mobile: 30px (Lower), Desktop: 15px (Higher)
+                    top: screenSize.width < 768 ? '25px' : '10px', // Adjusted to sit better
                     left: '50%',
                     transform: 'translateX(-50%) rotate(-15deg)',
                     background: '#000',
@@ -2726,31 +2728,30 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             stateRef.current.keys[e.key] = false;
         };
 
-        // 4-ZONE TOUCH CONTROLS:
-        // Top-Left = Steer Left | Top-Right = Steer Right
-        // Bottom-Left = Brake    | Bottom-Right = Speed Up
-        const applyTouchZone = (x, y) => {
+        // Multi-touch handling: Update state based on all active touches
+        const updateTouchControls = (touches) => {
             const w = window.innerWidth;
             const h = window.innerHeight;
             const s = stateRef.current;
-            // Reset steering keys and speed direction
+
+            // Reset state before checking all current touches
             s.keys['ArrowLeft'] = false;
             s.keys['ArrowRight'] = false;
             s.touchDirection = null;
 
-            if (y > h / 2) {
-                // Bottom half: steering only
-                if (x < w / 2) {
-                    s.keys['ArrowLeft'] = true;
+            // Iterate over all active touches to set current state
+            for (let i = 0; i < touches.length; i++) {
+                const x = touches[i].clientX;
+                const y = touches[i].clientY;
+
+                if (y > h / 2) {
+                    // Bottom half: Steering
+                    if (x < w / 2) s.keys['ArrowLeft'] = true;
+                    else s.keys['ArrowRight'] = true;
                 } else {
-                    s.keys['ArrowRight'] = true;
-                }
-            } else {
-                // Top half: brake or speed only
-                if (x < w / 2) {
-                    s.touchDirection = 'down'; // Brake
-                } else {
-                    s.touchDirection = 'up'; // Speed up
+                    // Top half: Speed/Brake
+                    if (x < w / 2) s.touchDirection = 'down'; // Brake
+                    else s.touchDirection = 'up'; // Speed up
                 }
             }
         };
@@ -2758,21 +2759,21 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         const handleTouchStart = (e) => {
             if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
             if (e.target.closest('[data-ctrl]')) return;
-            applyTouchZone(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault(); // Prevent scrolling/zooming during play
+            updateTouchControls(e.touches);
         };
 
         const handleTouchMove = (e) => {
             if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
             if (e.target.closest('[data-ctrl]')) return;
-            applyTouchZone(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault();
+            updateTouchControls(e.touches);
         };
 
         const handleTouchEnd = (e) => {
-            if (e.target.closest('[data-ctrl]')) return;
-            const s = stateRef.current;
-            s.keys['ArrowLeft'] = false;
-            s.keys['ArrowRight'] = false;
-            s.touchDirection = null;
+            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+            // Always update because a finger was lifted
+            updateTouchControls(e.touches);
         };
 
         // MOUSE CONTROLS (Mirrors Touch for Desktop 'Mobile View' testing)
@@ -2780,13 +2781,13 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         const handleMouseDown = (e) => {
             if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
             mouseDown = true;
-            applyTouchZone(e.clientX, e.clientY);
+            updateTouchControls([{ clientX: e.clientX, clientY: e.clientY }]);
         };
 
         const handleMouseMove = (e) => {
             if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
             if (!mouseDown) return;
-            applyTouchZone(e.clientX, e.clientY);
+            updateTouchControls([{ clientX: e.clientX, clientY: e.clientY }]);
         };
 
         const handleMouseUp = (e) => {
