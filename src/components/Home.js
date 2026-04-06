@@ -1467,7 +1467,7 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
             <div style={{
                 position: 'relative',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                padding: '40px 30px',
+                padding: 'clamp(15px, 3vh, 40px) clamp(15px, 3vw, 30px)',
                 width: 'min(90%, 420px)',
                 background: 'rgba(255, 255, 255, 0.03)',
                 backdropFilter: 'blur(30px)',
@@ -1479,17 +1479,17 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
             }}>
                 {/* Trophy with Glow */}
                 <div style={{
-                    fontSize: '80px',
-                    marginBottom: '15px',
+                    fontSize: 'clamp(40px, 8vh, 80px)',
+                    marginBottom: 'clamp(5px, 1.5vh, 15px)',
                     filter: `drop-shadow(0 0 20px ${th.primary})`,
                     animation: 'bounceTrophy 2s ease-in-out infinite'
                 }}>🏅</div>
 
                 <h1 style={{
-                    fontSize: 'clamp(24px, 6vw, 38px)',
+                    fontSize: 'clamp(18px, min(6vw, 4.5vh), 38px)',
                     fontWeight: '900',
                     color: '#FFF',
-                    margin: '0 0 5px 0',
+                    margin: '0 0 clamp(5px, 1vh, 5px) 0',
                     textAlign: 'center',
                     textTransform: 'uppercase',
                     letterSpacing: '2px',
@@ -1502,27 +1502,27 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gap: '20px',
+                    gap: 'clamp(8px, 1.5vh, 20px)',
                     width: '100%',
-                    marginBottom: '40px'
+                    marginBottom: 'clamp(15px, 3vh, 40px)'
                 }}>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.primary}` }}>
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>MILESTONE</div>
-                        <div style={{ fontSize: '24px', color: '#FFF', fontWeight: 'bold' }}>{kmCompleted}km</div>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(8px, 1.5vh, 15px)', borderRadius: '15px', borderBottom: `2px solid ${th.primary}` }}>
+                        <div style={{ fontSize: 'clamp(8px, 1.5vh, 10px)', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>MILESTONE</div>
+                        <div style={{ fontSize: 'clamp(16px, 3vh, 24px)', color: '#FFF', fontWeight: 'bold' }}>{kmCompleted}km</div>
                     </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.secondary}` }}>
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>REWARD</div>
-                        <div style={{ fontSize: '24px', color: th.primary, fontWeight: 'bold' }}>🪙 {coins}</div>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(8px, 1.5vh, 15px)', borderRadius: '15px', borderBottom: `2px solid ${th.secondary}` }}>
+                        <div style={{ fontSize: 'clamp(8px, 1.5vh, 10px)', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>REWARD</div>
+                        <div style={{ fontSize: 'clamp(16px, 3vh, 24px)', color: th.primary, fontWeight: 'bold' }}>🪙 {coins}</div>
                     </div>
                 </div>
 
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vh, 12px)' }}>
                     <button onClick={onStart} style={{
-                        width: '100%', padding: '18px',
+                        width: '100%', padding: 'clamp(12px, 2.5vh, 18px)',
                         background: `linear-gradient(to bottom, ${th.primary}, ${th.primary}dd)`,
                         border: 'none',
                         color: '#000',
-                        fontSize: '20px',
+                        fontSize: 'clamp(14px, 2.5vh, 20px)',
                         fontWeight: '900',
                         borderRadius: '12px',
                         cursor: 'pointer',
@@ -1538,12 +1538,12 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
 
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <button onClick={onMapSelect} style={{
-                            flex: 1, padding: '14px',
+                            flex: 1, padding: 'clamp(10px, 2vh, 14px)',
                             background: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)',
                             color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
                         }}>{t.mapsButton}</button>
                         <button onClick={onHome} style={{
-                            flex: 1, padding: '14px',
+                            flex: 1, padding: 'clamp(10px, 2vh, 14px)',
                             background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.1)',
                             color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
                         }}>{t.home}</button>
@@ -1580,7 +1580,7 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
             <div style={{
                 position: 'relative',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                padding: '35px 25px',
+                padding: 'clamp(15px, 3vh, 35px) clamp(15px, 3vw, 25px)',
                 width: 'min(85%, 380px)',
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(40px)',
@@ -1589,10 +1589,10 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
                 boxShadow: '0 40px 100px rgba(0,0,0,0.5)',
                 animation: 'victorySlide 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
-                <div style={{ fontSize: '80px', marginBottom: '5px', filter: 'drop-shadow(0 0 30px gold)' }}>🏆</div>
+                <div style={{ fontSize: 'clamp(40px, 8vh, 80px)', marginBottom: 'clamp(2px, 1vh, 5px)', filter: 'drop-shadow(0 0 30px gold)' }}>🏆</div>
 
                 <h1 style={{
-                    fontSize: 'clamp(28px, 8vw, 48px)',
+                    fontSize: 'clamp(22px, min(6vw, 5vh), 48px)',
                     fontWeight: '900',
                     color: 'gold',
                     margin: '0',
@@ -1605,10 +1605,10 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
                 </h1>
 
                 <p style={{
-                    fontSize: '14px',
+                    fontSize: 'clamp(10px, 2vh, 14px)',
                     color: '#FFF',
                     letterSpacing: '5px',
-                    margin: '8px 0 25px 0',
+                    margin: 'clamp(4px, 1vh, 8px) 0 clamp(10px, 2vh, 25px) 0',
                     fontWeight: 'bold',
                     opacity: 0.7
                 }}>
@@ -1619,50 +1619,50 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
                     width: '100%',
                     background: 'rgba(255,255,255,0.03)',
                     borderRadius: '24px',
-                    padding: '25px 20px',
-                    marginBottom: '35px',
+                    padding: 'clamp(12px, 2.5vh, 25px) clamp(10px, 2vw, 20px)',
+                    marginBottom: 'clamp(15px, 3vh, 35px)',
                     border: '1px solid rgba(255,255,255,0.08)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '15px'
+                    gap: 'clamp(8px, 1.5vh, 15px)'
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>TOTAL SCORE</span>
-                        <span style={{ color: 'gold', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(255, 215, 0, 0.3)' }}>{score}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 'clamp(9px, 1.5vh, 11px)', fontWeight: '900', letterSpacing: '2px' }}>TOTAL SCORE</span>
+                        <span style={{ color: 'gold', fontSize: 'clamp(16px, 3vh, 22px)', fontWeight: '950', textShadow: '0 0 10px rgba(255, 215, 0, 0.3)' }}>{score}</span>
                     </div>
 
                     <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>MILESTONES</span>
-                        <span style={{ color: '#FFF', fontSize: '22px', fontWeight: '950' }}>500km</span>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 'clamp(9px, 1.5vh, 11px)', fontWeight: '900', letterSpacing: '2px' }}>MILESTONES</span>
+                        <span style={{ color: '#FFF', fontSize: 'clamp(16px, 3vh, 22px)', fontWeight: '950' }}>500km</span>
                     </div>
 
                     <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>BONUS COINS</span>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 'clamp(9px, 1.5vh, 11px)', fontWeight: '900', letterSpacing: '2px' }}>BONUS COINS</span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '20px' }}>🪙</span>
-                            <span style={{ color: '#00E5FF', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>{coins}</span>
+                            <span style={{ fontSize: 'clamp(14px, 2.5vh, 20px)' }}>🪙</span>
+                            <span style={{ color: '#00E5FF', fontSize: 'clamp(16px, 3vh, 22px)', fontWeight: '950', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>{coins}</span>
                         </div>
                     </div>
                 </div>
 
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vh, 15px)' }}>
                     <button onClick={onRestart} style={{
-                        width: '100%', padding: '22px',
+                        width: '100%', padding: 'clamp(12px, 2.5vh, 22px)',
                         background: 'linear-gradient(to bottom, gold, #DAA520)',
                         border: 'none', color: '#000',
-                        fontSize: '24px', fontWeight: '900',
+                        fontSize: 'clamp(16px, 3vh, 24px)', fontWeight: '900',
                         borderRadius: '16px', cursor: 'pointer',
                         boxShadow: '0 8px 0 #B8860B'
                     }}>
                         {t.playAgain}
                     </button>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>MAPS</button>
-                        <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>HOME</button>
+                        <button onClick={onMapSelect} style={{ flex: 1, padding: 'clamp(10px, 2vh, 15px)', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>MAPS</button>
+                        <button onClick={onHome} style={{ flex: 1, padding: 'clamp(10px, 2vh, 15px)', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>HOME</button>
                     </div>
                 </div>
             </div>
@@ -3268,11 +3268,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     backdropFilter: 'blur(25px)',
                     zIndex: 4000,
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     justifyContent: 'center',
-                    fontFamily: '"Bungee", "Helvetica", sans-serif',
-                    overflowY: 'auto',
-                    padding: 'clamp(20px, 5vh, 40px) 0'
+                    fontFamily: '"Bungee", "Helvetica", sans-serif'
                 }}>
                     {/* Background Danger Glow */}
                     <div style={{
@@ -3294,7 +3292,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         border: `1px solid rgba(255, 255, 255, 0.1)`,
                         borderTop: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}`,
                         borderRadius: '32px',
-                        padding: 'clamp(20px, 5vw, 40px) clamp(15px, 4vw, 30px)',
+                        padding: 'clamp(15px, 3vh, 40px) clamp(15px, 3vw, 30px)',
                         boxShadow: `0 50px 100px rgba(0,0,0,0.5)`,
                         display: 'flex',
                         flexDirection: 'column',
@@ -3303,15 +3301,15 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     }}>
                         {/* Map Icon Badge */}
                         <div style={{
-                            width: '90px',
-                            height: '90px',
+                            width: 'clamp(50px, 10vh, 90px)',
+                            height: 'clamp(50px, 10vh, 90px)',
                             background: `linear-gradient(135deg, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '48px',
-                            marginBottom: '20px',
+                            fontSize: 'clamp(24px, 5vh, 48px)',
+                            marginBottom: 'clamp(5px, 2vh, 20px)',
                             border: `4px solid ${(popupThemes[mapType] || popupThemes.highway).accent}44`,
                             animation: 'shakeIcon 3s infinite'
                         }}>
@@ -3319,7 +3317,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         </div>
 
                         <h1 style={{
-                            fontSize: 'clamp(32px, 10vw, 70px)',
+                            fontSize: 'clamp(24px, min(8vw, 6vh), 70px)',
                             fontWeight: '950',
                             margin: '0',
                             color: '#FFF',
@@ -3334,10 +3332,10 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
                         <p style={{
                             color: 'rgba(255,255,255,0.5)',
-                            fontSize: '12px',
+                            fontSize: 'clamp(9px, 1.5vh, 12px)',
                             fontWeight: 'bold',
                             letterSpacing: '5px',
-                            margin: '5px 0 35px 0',
+                            margin: 'clamp(2px, 1vh, 5px) 0 clamp(10px, 3vh, 35px) 0',
                             textTransform: 'uppercase'
                         }}>
                             CAR REPAIR NEEDED
