@@ -359,13 +359,15 @@ const RoadPreview = ({ mapId, opacity = 1 }) => {
             {/* Road Area (Top-Down Parallel) */}
             <rect x="20" y="0" width="60" height="100" fill={colors.road} />
 
-            {/* Lane Dividers (Two lines for three lanes) */}
-            <line x1="40" y1="0" x2="40" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
-                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
-            </line>
-            <line x1="60" y1="0" x2="60" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
-                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
-            </line>
+            {/* Lane Dividers (Two lines for three lanes). Using transform for composited animations */}
+            <g>
+                <line x1="40" y1="-16" x2="40" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5" />
+                <animateTransform attributeName="transform" type="translate" from="0 -16" to="0 0" dur="0.4s" repeatCount="indefinite" />
+            </g>
+            <g>
+                <line x1="60" y1="-16" x2="60" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5" />
+                <animateTransform attributeName="transform" type="translate" from="0 -16" to="0 0" dur="0.4s" repeatCount="indefinite" />
+            </g>
 
             {/* Moving Coin */}
             <g>
@@ -680,7 +682,6 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             </div>
 
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
         @keyframes carFloat {
           0%, 100% { transform: scaleX(-1) translateY(0); }
           50% { transform: scaleX(-1) translateY(-15px); }
@@ -694,22 +695,8 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
           50% { transform: translateY(-10px); }
         }
         @keyframes titleGlow {
-          0%, 100% {
-            text-shadow:
-              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
-              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
-              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
-              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
-              10px 12px 16px rgba(0,0,0,0.7);
-          }
-          50% {
-            text-shadow:
-              1px 1px 0 #b8860b, 2px 2px 0 #b8860b,
-              3px 3px 0 #9a7200, 4px 4px 0 #9a7200,
-              5px 5px 0 #7a5900, 6px 6px 0 #7a5900,
-              7px 7px 0 #5c4000, 8px 8px 0 #3a2800,
-              10px 12px 16px rgba(0,0,0,0.9);
-          }
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.02); filter: brightness(1.1); }
         }
 
         @keyframes badgeRotate {
@@ -1361,12 +1348,12 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
           100% { transform: rotateY(360deg); }
         }
         @keyframes coinGlow {
-          0%, 100% { boxShadow: 0 0 30px rgba(255,215,0,0.6); }
-          50% { boxShadow: 0 0 50px rgba(255,215,0,0.9); }
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.05); filter: brightness(1.2); }
         }
         @keyframes titlePulse {
-          0%, 100% { textShadow: 0 0 20px rgba(255,255,255,0.4); transform: scale(1); }
-          50% { textShadow: 0 0 40px rgba(255,255,255,0.6); transform: scale(1.02); }
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.03); opacity: 0.9; }
         }
         @keyframes flagWave {
           0%, 100% { transform: translateY(0) rotateZ(-5deg); }
@@ -1775,6 +1762,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         enemies: [],
         coins: [],
         coinsThisLevel: 0,
+        score: 0,
+        earnedCoins: 0,
         keys: {},
         roadOffset: 0,
         touchStartX: null,
@@ -3279,9 +3268,11 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     backdropFilter: 'blur(25px)',
                     zIndex: 4000,
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'center',
-                    fontFamily: '"Bungee", "Helvetica", sans-serif'
+                    fontFamily: '"Bungee", "Helvetica", sans-serif',
+                    overflowY: 'auto',
+                    padding: 'clamp(20px, 5vh, 40px) 0'
                 }}>
                     {/* Background Danger Glow */}
                     <div style={{
@@ -3296,13 +3287,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     <div style={{
                         position: 'relative',
                         zIndex: 1,
+                        margin: 'auto', // Centers when height is smaller than container
                         width: 'min(90%, 450px)',
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(40px)',
                         border: `1px solid rgba(255, 255, 255, 0.1)`,
                         borderTop: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}`,
                         borderRadius: '32px',
-                        padding: '40px 30px',
+                        padding: 'clamp(20px, 5vw, 40px) clamp(15px, 4vw, 30px)',
                         boxShadow: `0 50px 100px rgba(0,0,0,0.5)`,
                         display: 'flex',
                         flexDirection: 'column',
@@ -3327,7 +3319,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         </div>
 
                         <h1 style={{
-                            fontSize: 'clamp(44px, 12vw, 70px)',
+                            fontSize: 'clamp(32px, 10vw, 70px)',
                             fontWeight: '950',
                             margin: '0',
                             color: '#FFF',
@@ -3356,31 +3348,31 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             width: '100%',
                             display: 'grid',
                             gridTemplateColumns: '1fr 1fr',
-                            gap: '15px',
-                            marginBottom: '40px'
+                            gap: 'clamp(8px, 2vw, 15px)',
+                            marginBottom: 'clamp(20px, 5vh, 40px)'
                         }}>
-                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}` }}>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>FINAL SCORE</div>
-                                <div style={{ fontSize: '28px', color: '#FFF', fontWeight: 'black' }}>{score}</div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(10px, 3vw, 20px)', borderRadius: '16px', borderLeft: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}` }}>
+                                <div style={{ fontSize: 'clamp(8px, 2vw, 10px)', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>FINAL SCORE</div>
+                                <div style={{ fontSize: 'clamp(18px, 5vw, 28px)', color: '#FFF', fontWeight: 'black', overflow: 'hidden', textOverflow: 'ellipsis' }}>{score}</div>
                             </div>
-                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid #FFD700` }}>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>COINS LOST</div>
-                                <div style={{ fontSize: '28px', color: '#FFD700', fontWeight: 'black' }}>🪙 {earnedCoins}</div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(10px, 3vw, 20px)', borderRadius: '16px', borderLeft: `6px solid #FFD700` }}>
+                                <div style={{ fontSize: 'clamp(8px, 2vw, 10px)', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>COINS LOST</div>
+                                <div style={{ fontSize: 'clamp(18px, 5vw, 28px)', color: '#FFD700', fontWeight: 'black', overflow: 'hidden', textOverflow: 'ellipsis' }}>🪙 {earnedCoins}</div>
                             </div>
                         </div>
 
                         {/* Actions */}
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 2vh, 15px)' }}>
                             <button
                                 onClick={restart}
                                 style={{
                                     width: '100%',
-                                    padding: '20px',
+                                    padding: 'clamp(15px, 4vh, 20px)',
                                     background: `linear-gradient(to bottom, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
                                     border: 'none',
                                     borderRadius: '16px',
                                     color: (popupThemes[mapType] || popupThemes.highway).accent,
-                                    fontSize: '22px',
+                                    fontSize: 'clamp(18px, 5vw, 22px)',
                                     fontWeight: '900',
                                     cursor: 'pointer',
                                     boxShadow: `0 6px 0 ${(popupThemes[mapType] || popupThemes.highway).primary}88`,
@@ -3393,8 +3385,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             </button>
 
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.mapsButton}</button>
-                                <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.home}</button>
+                                <button onClick={onMapSelect} style={{ flex: 1, padding: 'clamp(12px, 3vh, 15px)', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', fontSize: 'clamp(12px, 3.5vw, 16px)', cursor: 'pointer' }}>{t.mapsButton}</button>
+                                <button onClick={onHome} style={{ flex: 1, padding: 'clamp(12px, 3vh, 15px)', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', fontSize: 'clamp(12px, 3.5vw, 16px)', cursor: 'pointer' }}>{t.home}</button>
                             </div>
                         </div>
                     </div>
