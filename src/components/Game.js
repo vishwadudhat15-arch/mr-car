@@ -115,8 +115,8 @@ export default function Game({ onMapSelect, mapType, coins, setCoins, onHome, se
             rafRef.current = requestAnimationFrame(loop);
         };
 
-        const handleKeyDown = (e) => { s.keys[e.key] = true; };
-        const handleKeyUp = (e) => { s.keys[e.key] = false; };
+        const handleKeyDown = (e) => { stateRef.current.keys[e.key] = true; };
+        const handleKeyUp = (e) => { stateRef.current.keys[e.key] = false; };
         const handleTouchStart = (e) => {
             const x = e.touches[0].clientX;
             stateRef.current.keys['ArrowLeft'] = x < W / 2;
