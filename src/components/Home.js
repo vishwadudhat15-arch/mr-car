@@ -3285,7 +3285,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     <div style={{
                         position: 'relative',
                         zIndex: 1,
-                        margin: 'auto', // Centers when height is smaller than container
+                        margin: 'auto', // Cegit add .
+git statusnters when height is smaller than container
                         width: 'min(90%, 450px)',
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(40px)',
