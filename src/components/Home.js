@@ -2946,43 +2946,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             stateRef.current.keys[e.key] = false;
         };
 
-        // 4-ZONE TOUCH CONTROLS (MULTI-TOUCH):
-        // Left Half = Steering | Right Half = Speed/Brake
-        // Far Left (x < w/4) = Steer Left | Mid Left (w/4 <= x < w/2) = Steer Right
-        // Mid Right (w/2 <= x < 3w/4) = Brake | Far Right (x >= 3w/4) = Speed Up
-        const applyTouches = (touches) => {
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            const s = stateRef.current;
-
-            // Reset all inputs before processing current touches
-            s.keys['ArrowLeft'] = false;
-            s.keys['ArrowRight'] = false;
-            s.touchDirection = null;
-
-            for (let i = 0; i < touches.length; i++) {
-                const x = touches[i].clientX;
-                const y = touches[i].clientY;
-
-                if (x < w / 2) {
-                    // Left half: Steering
-                    if (x < w / 4) {
-                        s.keys['ArrowLeft'] = true;
-                    } else {
-                        s.keys['ArrowRight'] = true;
-                    }
-                } else {
-                    // Right half: Speed (Top) or Brake (Bottom)
-                    if (y < h - 100) {
-                        s.touchDirection = 'up'; // Speed up
-                    } else {
-                        s.touchDirection = 'down'; // Brake
-                    }
-                }
-            }
-        };
-
-
+        // 4-ZONE TOUCH CONTROLS (MULTI-TOUCH): Now handled by onPointerDown/onPointerUp in UI buttons
 
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
