@@ -159,14 +159,14 @@ export default function AdOverlay() {
                     0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 245, 255, 0.3); }
                     50% { transform: scale(1.04); box-shadow: 0 0 24px rgba(0, 245, 255, 0.6); }
                 }
-                .ad-btn {
+                .close-overlay-btn {
                     transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
-                .ad-btn:hover {
+                .close-overlay-btn:hover {
                     transform: translateY(-2px);
                     filter: brightness(1.15) saturate(1.1);
                 }
-                .ad-btn:active {
+                .close-overlay-btn:active {
                     transform: translateY(1px);
                     filter: brightness(0.92);
                 }
@@ -239,7 +239,7 @@ export default function AdOverlay() {
                                 ref={closeBtnRef}
                                 onClick={handleClose}
                                 aria-label="Close Advertisement"
-                                className="ad-btn"
+                                className="close-overlay-btn"
                                 style={{
                                     width: 38,
                                     height: 38,
@@ -336,7 +336,7 @@ export default function AdOverlay() {
                     ) : (
                         <button
                             onClick={handleClose}
-                            className="ad-btn"
+                            className="close-overlay-btn"
                             style={{
                                 width: '100%',
                                 padding: '12px 20px',

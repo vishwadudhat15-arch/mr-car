@@ -145,14 +145,14 @@ export default function Game({ onMapSelect, mapType, coins, setCoins, onHome, se
             <canvas ref={canvasRef} width={canvasSize.w} height={canvasSize.h} style={{ width: '100%', height: '100%', touchAction: 'none' }} />
             {screen === "play" && <div style={{ position: 'absolute', top: 20, left: 20, fontSize: '24px', fontWeight: '900' }}>{Math.floor(speed * 20)} km/h</div>}
             {isPaused && <div onClick={() => setIsPaused(false)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>PAUSED</div>}
-            <button 
-                onClick={() => setIsPaused(true)} 
+            <button
+                onClick={() => setIsPaused(true)}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(255,50,50,0.6), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1) translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 15px rgba(255,50,50,0.4), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
                 onTouchStart={(e) => { e.currentTarget.style.transform = 'scale(0.95) translateY(2px)'; e.currentTarget.style.boxShadow = '0 2px 5px rgba(255,50,50,0.4), inset 0 0 5px rgba(0,0,0,0.2)'; }}
                 onTouchEnd={(e) => { e.currentTarget.style.transform = 'scale(1) translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 15px rgba(255,50,50,0.4), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
-                style={{ 
-                    position: 'absolute', top: 20, right: 20, 
+                style={{
+                    position: 'absolute', top: 20, right: 20,
                     background: 'linear-gradient(145deg, #ff5e5e, #e60000)',
                     border: '2px solid #ff9999',
                     borderRadius: '50%',
@@ -184,14 +184,14 @@ export default function Game({ onMapSelect, mapType, coins, setCoins, onHome, se
             </div>}
             {screen === "play" && isMobile && (
                 <>
-                    <button 
-                        onPointerDown={(e) => { e.preventDefault(); stateRef.current.keys['ArrowLeft'] = true; }} 
+                    <button
+                        onPointerDown={(e) => { e.preventDefault(); stateRef.current.keys['ArrowLeft'] = true; }}
                         onPointerUp={(e) => { e.preventDefault(); stateRef.current.keys['ArrowLeft'] = false; }}
                         onPointerOut={(e) => { e.preventDefault(); stateRef.current.keys['ArrowLeft'] = false; }}
                         style={{ position: 'absolute', bottom: 40, left: 40, width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)', border: '2px solid white', fontSize: '40px', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', userSelect: 'none', touchAction: 'none', zIndex: 100 }}
                     >◀</button>
-                    <button 
-                        onPointerDown={(e) => { e.preventDefault(); stateRef.current.keys['ArrowRight'] = true; }} 
+                    <button
+                        onPointerDown={(e) => { e.preventDefault(); stateRef.current.keys['ArrowRight'] = true; }}
                         onPointerUp={(e) => { e.preventDefault(); stateRef.current.keys['ArrowRight'] = false; }}
                         onPointerOut={(e) => { e.preventDefault(); stateRef.current.keys['ArrowRight'] = false; }}
                         style={{ position: 'absolute', bottom: 40, right: 40, width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)', border: '2px solid white', fontSize: '40px', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', userSelect: 'none', touchAction: 'none', zIndex: 100 }}

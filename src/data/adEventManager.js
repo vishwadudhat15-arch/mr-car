@@ -10,24 +10,23 @@
 export function logAnalyticsEvent(eventName, params = {}) {
   let adTriggered = false;
 
-  if (eventName === 'level_start') {
-    const levelId = params && params.level_index !== undefined ? params.level_index : 'general';
-    const storageKey = 'ws_level_starts_count';
-    const count = parseInt(localStorage.getItem(storageKey) || '0') + 1;
+  if (eventName === 'level_start' || eventName === 'restart_game') {
+    const storageKey = 'ws_game_plays_count'; // Shared counter for any game start/restart
+    let count = parseInt(localStorage.getItem(storageKey), 10);
+    if (isNaN(count)) count = 0;
+    count += 1;
     localStorage.setItem(storageKey, count.toString());
-    console.log(`%c[Analytics] level_start (Level ${typeof levelId === 'number' ? levelId + 1 : levelId}) count: ${count}`, 'color: #38bdf8; font-weight: bold;');
     
-
-
+    console.log(`%c[AD COUNTER] Total Plays: ${count} / 3`, 'font-size: 16px; color: #ff00ff; font-weight: bold; background: #222; padding: 4px 8px; border-radius: 4px;');
+    
     if (count % 3 === 0) {
-      const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      const isAdsEnabled = urlParams ? urlParams.get('ads') === 'true' : false;
+      const isAdsEnabled = true;
 
       if (!isAdsEnabled) {
         console.log('%c[Analytics] Ad trigger suppressed: Ads disabled by default (enable with ?ads=true)', 'color: #ff4a4a; font-weight: bold;');
       } else {
         adTriggered = true;
-        console.log('%c[Analytics] Ad trigger active: Ads enabled via URL', 'color: #4caf50; font-weight: bold;');
+        console.log('%c[Analytics] Ad trigger active: Ads enabled by default', 'color: #4caf50; font-weight: bold;');
       }
     }
   }

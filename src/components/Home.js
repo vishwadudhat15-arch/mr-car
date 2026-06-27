@@ -3001,6 +3001,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
 
     const restart = () => {
+        logAnalyticsEvent('restart_game');
         stateRef.current = {
             distance: 0,
             speed: 4,
