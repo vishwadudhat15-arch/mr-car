@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import bgImage from '../images.jpeg';
+import { logAnalyticsEvent } from '../data/adEventManager';
 
 // UI_SCALE removed (unused)
 
@@ -359,13 +360,15 @@ const RoadPreview = ({ mapId, opacity = 1 }) => {
             {/* Road Area (Top-Down Parallel) */}
             <rect x="20" y="0" width="60" height="100" fill={colors.road} />
 
-            {/* Lane Dividers (Two lines for three lanes) */}
-            <line x1="40" y1="0" x2="40" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
-                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
-            </line>
-            <line x1="60" y1="0" x2="60" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5">
-                <animate attributeName="stroke-dashoffset" from="16" to="0" dur="0.4s" repeatCount="indefinite" />
-            </line>
+            {/* Lane Dividers (Two lines for three lanes). Using transform for composited animations */}
+            <g>
+                <line x1="40" y1="-16" x2="40" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5" />
+                <animateTransform attributeName="transform" type="translate" from="0 -16" to="0 0" dur="0.4s" repeatCount="indefinite" />
+            </g>
+            <g>
+                <line x1="60" y1="-16" x2="60" y2="100" stroke={colors.line} strokeDasharray="8,8" strokeWidth="1.5" />
+                <animateTransform attributeName="transform" type="translate" from="0 -16" to="0 0" dur="0.4s" repeatCount="indefinite" />
+            </g>
 
             {/* Moving Coin */}
             <g>
@@ -450,7 +453,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
 
     return (
         <div className="home-container" style={{
-            height: '100dvh', // Use dynamic viewport height
+            height: `${screenSize.height}px`, // Fix for mobile 100vh issue
             width: '100vw',
             display: 'flex',
             flexDirection: 'column',
@@ -515,27 +518,25 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                 justifyContent: 'center',
                 zIndex: 10,
                 flex: 1,
-                maxHeight: 'calc(100vh - 200px)', // Reduced to give more space at bottom
+                maxHeight: `calc(${screenSize.height}px - 140px)`,
                 overflow: 'hidden',
-                width: '100%',
             }}>
                 <div className="title-section" style={{
                     textAlign: 'center',
                     animation: 'fadeIn 1s',
-                    marginBottom: 'clamp(5px, 2vh, 20px)',
+                    marginBottom: '0px',
                     flex: 'shrink',
                     minHeight: 'fit-content',
-                    position: 'relative',
-                    zIndex: 20,
                 }}>
                     <h1 className="title-3d" style={{
-                        fontSize: 'clamp(42px, 12vw, 100px)',
+                        fontFamily: '"Bungee", "Arial Black", sans-serif',
+                        fontSize: 'clamp(40px, 15vw, 90px)',
                         margin: '0',
                         color: '#FFD700',
                         fontWeight: '900',
-                        fontFamily: '"Bungee", "Helvetica", sans-serif',
-                        letterSpacing: 'clamp(2px, 2vw, 10px)',
+                        letterSpacing: 'clamp(2px, 1.5vw, 8px)',
                         WebkitTextStroke: 'clamp(1px, 0.5vw, 3px) #000',
+                        whiteSpace: 'nowrap',
                         textShadow: [
                             '1px 1px 0 #b8860b',
                             '2px 2px 0 #b8860b',
@@ -545,25 +546,19 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                             '6px 6px 0 #7a5900',
                             '7px 7px 0 #5c4000',
                             '8px 8px 0 #3a2800',
-                            '10px 12px 16px rgba(0,0,0,0.7)',
+                            '10px 12px 16px rgba(0,0,0,0.3)',
                         ].join(', '),
                         animation: 'titleGlow 2s ease-in-out infinite',
-                        lineHeight: '1.1',
-                        whiteSpace: 'nowrap',
                     }}>
                         {t.title}
                     </h1>
-                    <p style={{
-                        fontSize: 'clamp(14px, 4vw, 32px)',
+                    <p className="subtitle" style={{
+                        fontSize: 'clamp(12px, 3vw, 28px)',
                         color: '#fff',
-                        fontWeight: '800',
-                        textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                        letterSpacing: 'clamp(2px, 1vw, 6px)',
-                        margin: 'clamp(2px, 1vh, 10px) 0 0 0',
-                        textTransform: 'uppercase',
-                        opacity: 0.9,
-                        fontFamily: 'system-ui, -apple-system, sans-serif',
-                        whiteSpace: 'nowrap',
+                        fontWeight: 'bold',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                        letterSpacing: 'clamp(1px, 0.5vw, 4px)',
+                        margin: '5px 0 15px 0',
                     }}>
                         {t.subtitle}
                     </p>
@@ -579,7 +574,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
                     display: 'flex',
                     justifyContent: 'center',
                 }}>
-                    <svg width="clamp(120px, 40vw, 400px)" height="clamp(60px, 20vw, 200px)" viewBox="0 0 300 150" style={{ transform: 'scaleX(-1)', width: '100%', height: 'auto', shapeRendering: 'geometricPrecision' }} preserveAspectRatio="xMidYMid meet">
+                    <svg width="clamp(220px, 70vw, 400px)" height="clamp(110px, 35vw, 200px)" viewBox="0 0 300 150" style={{ transform: 'scaleX(-1)', width: '100%', height: 'auto', shapeRendering: 'geometricPrecision' }} preserveAspectRatio="xMidYMid meet">
                         <rect x="40" y="70" width="220" height="60" fill="#FF8C00" rx="12" stroke="none" />
                         <path d="M 80 70 L 120 32 L 200 32 L 230 70 Z" fill="#FF8C00" stroke="none" />
                         <path d="M 85 70 L 120 36 L 200 36 L 225 70 Z" fill="#FFAA33" opacity="0.5" stroke="none" />
@@ -619,7 +614,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             </div>
 
             <div className="play-button-container" style={{
-                marginBottom: 'clamp(50px, 15vh, 120px)', // Increased margin to lift button up
+                marginBottom: 'clamp(20px, 8vh, 80px)',
                 zIndex: 10,
                 position: 'relative',
                 width: '100%',
@@ -633,7 +628,7 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             }}>
                 <div className="free-badge" style={{
                     position: 'absolute',
-                    top: screenSize.width < 768 ? '25px' : '10px', // Adjusted to sit better
+                    top: screenSize.width < 768 ? '30px' : '15px', // Mobile: 30px (Lower), Desktop: 15px (Higher)
                     left: '50%',
                     transform: 'translateX(-50%) rotate(-15deg)',
                     background: '#000',
@@ -690,7 +685,6 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
             </div>
 
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
         @keyframes carFloat {
           0%, 100% { transform: scaleX(-1) translateY(0); }
           50% { transform: scaleX(-1) translateY(-15px); }
@@ -704,8 +698,8 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
           50% { transform: translateY(-10px); }
         }
         @keyframes titleGlow {
-          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,215,0,0.2)); }
-          50% { transform: scale(1.03); filter: drop-shadow(0 0 25px rgba(255,215,0,0.5)) brightness(1.1); }
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.02); filter: brightness(1.1); }
         }
 
         @keyframes badgeRotate {
@@ -719,6 +713,18 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
           .building-2, .building-4, .building-5 { display: none !important; }
           .building-1 { width: 45px !important; height: 90px !important; }
           .building-3 { width: 50px !important; height: 110px !important; }
+          
+          /* Better Title styling for mobile */
+          .title-3d {
+              font-size: 16vw !important;
+              letter-spacing: 2px !important;
+              -webkit-text-stroke: 1.5px #000 !important;
+              text-shadow: 1px 1px 0 #b8860b, 2px 2px 0 #9a7200, 3px 3px 0 #7a5900, 4px 5px 8px rgba(0,0,0,0.3) !important;
+          }
+          .subtitle {
+              font-size: 4vw !important;
+              margin: 2px 0 10px 0 !important;
+          }
         }
 
         @media (max-width: 896px) and (orientation: landscape) {
@@ -732,24 +738,13 @@ function HomeScreen({ onPlay, lang, mapId = 'highway' }) {
 
         @media (max-width: 1024px) {
           .title-3d {
-            text-shadow: 
-              1px 1px 0 #b8860b, 
-              2px 2px 0 #b8860b,
-              3px 3px 0 #9a7200,
-              5px 6px 10px rgba(0,0,0,0.7) !important;
-            -webkit-text-stroke: 1.5px #000 !important;
-            letter-spacing: 2px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .title-3d {
-            font-size: clamp(40px, 15vw, 60px) !important;
-            text-shadow: 
-              1px 1px 0 #b8860b, 
+            text-shadow:
+              1px 1px 0 #b8860b,
               2px 2px 0 #9a7200,
-              4px 5px 8px rgba(0,0,0,0.7) !important;
-            -webkit-text-stroke: 1px #000 !important;
-            letter-spacing: 1px !important;
+              3px 3px 0 #7a5900,
+              4px 4px 0 #5c4000,
+              6px 8px 10px rgba(0,0,0,0.3) !important;
+            -webkit-text-stroke: 2px #000 !important;
           }
         }
       `}</style>
@@ -919,33 +914,6 @@ function SettingsPanel({ onClose, settings, onSettingsChange, lang }) {
                                 }}
                             >
                                 {settings.audioEnabled ? t.on : t.off}
-                            </button>
-                        </div>
-
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            background: 'rgba(255,255,255,0.05)',
-                            padding: '8px 12px',
-                            borderRadius: '12px',
-                            border: '1px solid rgba(255,255,255,0.1)'
-                        }}>
-                            <span style={{ fontSize: 'clamp(14px, 3vw, 16px)', color: 'white', fontWeight: 'bold' }}>🎵 {t.music}</span>
-                            <button
-                                onClick={() => handleSettingChange({ ...settings, musicEnabled: !settings.musicEnabled })}
-                                style={{
-                                    padding: '4px 12px',
-                                    fontSize: '12px',
-                                    borderRadius: '15px',
-                                    border: '1px solid rgba(255, 255, 255, 0.4)',
-                                    cursor: 'pointer',
-                                    background: settings.musicEnabled ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                {settings.musicEnabled ? t.on : t.off}
                             </button>
                         </div>
                     </div>
@@ -1138,7 +1106,9 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                         backdropFilter: 'blur(5px)',
                         animation: 'coinGlow 2s ease-in-out infinite',
                     }}>
-                        <span style={{ fontSize: 'clamp(12px, 2vw, 18px)', animation: 'coinSpin 3s linear infinite' }}>🪙</span>
+                        <span style={{ animation: 'coinSpin 3s linear infinite', display: 'flex', alignItems: 'center' }}>
+                            <GoldCoin size="1.5em" />
+                        </span>
                         <span>{coins}</span>
                     </div>
                 </div>
@@ -1179,7 +1149,10 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                             e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                         }}
                     >
-                        ⚙️
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
                     </button>
                 </div>
 
@@ -1198,15 +1171,15 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: 'clamp(10px, 2vw, 30px)',
+                        gap: 'clamp(5px, 1.5vw, 30px)',
                         marginBottom: 'clamp(20px, 3vh, 40px)',
                         marginTop: 0,
-                        flexWrap: 'wrap',
+                        flexWrap: 'nowrap',
                         padding: '0 clamp(10px, 2vw, 20px)',
                     }}>
-                        <span style={{ fontSize: 'clamp(30px, 6vw, 60px)', animation: 'flagWave 2s ease-in-out infinite', opacity: 0.8 }}>🏁</span>
+                        <span style={{ fontSize: 'clamp(18px, 6vmin, 50px)', animation: 'flagWave 2s ease-in-out infinite', opacity: 0.8 }}>🏁</span>
                         <h1 style={{
-                            fontSize: 'clamp(24px, 5vw, 60px)',
+                            fontSize: 'clamp(18px, 6.5vmin, 50px)',
                             marginBottom: 0,
                             marginTop: 0,
                             textAlign: 'center',
@@ -1216,13 +1189,13 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                             fontStyle: 'italic',
                             position: 'relative',
                             zIndex: 1,
-                            letterSpacing: 'clamp(2px, 0.5vw, 6px)',
+                            letterSpacing: 'clamp(1px, 0.5vw, 6px)',
                             animation: 'titlePulse 2s ease-in-out infinite',
                             textTransform: 'uppercase',
                         }}>
                             {t.selectMap}
                         </h1>
-                        <span style={{ fontSize: 'clamp(30px, 6vw, 60px)', animation: 'flagWave 2s ease-in-out infinite 0.5s', opacity: 0.8, transform: 'scaleX(-1)' }}>🏁</span>
+                        <span style={{ fontSize: 'clamp(18px, 6vmin, 50px)', animation: 'flagWave 2s ease-in-out infinite 0.5s', opacity: 0.8, transform: 'scaleX(-1)' }}>🏁</span>
                     </div>
 
                     <div className="map-grid-container" style={{
@@ -1251,7 +1224,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                         backdropFilter: 'blur(12px)',
                                         borderRadius: '20px',
                                         padding: '10px',
-                                        minHeight: 'clamp(180px, 25vh, 250px)',
+                                        minHeight: 'clamp(140px, 35vmin, 250px)',
                                         cursor: 'pointer',
                                         border: '2px solid rgba(255, 255, 255, 0.5)', // Keep strong border
                                         transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
@@ -1301,7 +1274,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                         width: '100%',
                                     }}>
                                         <div style={{
-                                            fontSize: 'clamp(50px, 10vw, 90px)',
+                                            fontSize: 'clamp(40px, 12vmin, 90px)',
                                             marginBottom: 'clamp(8px, 1.5vh, 18px)',
                                             opacity: hoveredMapId === map.id ? 0 : 1,
                                             transform: hoveredMapId === map.id ? 'translateY(-20px) scale(0.5)' : 'translateY(0) scale(1)',
@@ -1310,7 +1283,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                             {map.icon}
                                         </div>
                                         <h2 style={{
-                                            fontSize: 'clamp(18px, 3.5vw, 36px)',
+                                            fontSize: 'clamp(16px, 4.5vmin, 36px)',
                                             color: 'white',
                                             margin: 'clamp(6px, 1vh, 12px) 0',
                                             fontWeight: 'bold',
@@ -1322,7 +1295,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                         </h2>
                                         <p style={{
                                             color: hoveredMapId === map.id ? '#fff' : 'rgba(255,255,255,0.8)',
-                                            fontSize: 'clamp(12px, 2.5vw, 18px)',
+                                            fontSize: 'clamp(12px, 3.5vmin, 18px)',
                                             margin: 'clamp(6px, 1vh, 12px) 0',
                                             textShadow: hoveredMapId === map.id ? '0 1px 4px rgba(0,0,0,0.8)' : 'none',
                                             fontWeight: hoveredMapId === map.id ? '600' : 'normal',
@@ -1337,7 +1310,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                                             borderRadius: '50px',
                                             color: 'white',
                                             fontWeight: 'bold',
-                                            fontSize: 'clamp(12px, 2vw, 18px)',
+                                            fontSize: 'clamp(12px, 3.5vmin, 18px)',
                                             boxShadow: hoveredMapId === map.id ? '0 6px 20px rgba(0,0,0,0.4)' : '0 4px 15px rgba(0,0,0,0.2)',
                                             transform: hoveredMapId === map.id ? 'scale(1.1)' : 'scale(1)',
                                             transition: 'all 0.3s',
@@ -1368,12 +1341,12 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
           100% { transform: rotateY(360deg); }
         }
         @keyframes coinGlow {
-          0%, 100% { boxShadow: 0 0 30px rgba(255,215,0,0.6); }
-          50% { boxShadow: 0 0 50px rgba(255,215,0,0.9); }
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.05); filter: brightness(1.2); }
         }
         @keyframes titlePulse {
-          0%, 100% { textShadow: 0 0 20px rgba(255,255,255,0.4); transform: scale(1); }
-          50% { textShadow: 0 0 40px rgba(255,255,255,0.6); transform: scale(1.02); }
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.03); opacity: 0.9; }
         }
         @keyframes flagWave {
           0%, 100% { transform: translateY(0) rotateZ(-5deg); }
@@ -1487,7 +1460,7 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
             <div style={{
                 position: 'relative',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                padding: '40px 30px',
+                padding: 'clamp(15px, 3vh, 40px) clamp(15px, 3vw, 30px)',
                 width: 'min(90%, 420px)',
                 background: 'rgba(255, 255, 255, 0.03)',
                 backdropFilter: 'blur(30px)',
@@ -1499,17 +1472,17 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
             }}>
                 {/* Trophy with Glow */}
                 <div style={{
-                    fontSize: '80px',
-                    marginBottom: '15px',
+                    fontSize: 'clamp(40px, 8vh, 80px)',
+                    marginBottom: 'clamp(5px, 1.5vh, 15px)',
                     filter: `drop-shadow(0 0 20px ${th.primary})`,
                     animation: 'bounceTrophy 2s ease-in-out infinite'
                 }}>🏅</div>
 
                 <h1 style={{
-                    fontSize: 'clamp(24px, 6vw, 38px)',
+                    fontSize: 'clamp(18px, min(6vw, 4.5vh), 38px)',
                     fontWeight: '900',
                     color: '#FFF',
-                    margin: '0 0 5px 0',
+                    margin: '0 0 clamp(5px, 1vh, 5px) 0',
                     textAlign: 'center',
                     textTransform: 'uppercase',
                     letterSpacing: '2px',
@@ -1522,27 +1495,27 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gap: '20px',
+                    gap: 'clamp(8px, 1.5vh, 20px)',
                     width: '100%',
-                    marginBottom: '40px'
+                    marginBottom: 'clamp(15px, 3vh, 40px)'
                 }}>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.primary}` }}>
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>MILESTONE</div>
-                        <div style={{ fontSize: '24px', color: '#FFF', fontWeight: 'bold' }}>{kmCompleted}km</div>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(8px, 1.5vh, 15px)', borderRadius: '15px', borderBottom: `2px solid ${th.primary}` }}>
+                        <div style={{ fontSize: 'clamp(8px, 1.5vh, 10px)', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>MILESTONE</div>
+                        <div style={{ fontSize: 'clamp(16px, 3vh, 24px)', color: '#FFF', fontWeight: 'bold' }}>{kmCompleted}km</div>
                     </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', borderBottom: `2px solid ${th.secondary}` }}>
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>REWARD</div>
-                        <div style={{ fontSize: '24px', color: th.primary, fontWeight: 'bold' }}>🪙 {coins}</div>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(8px, 1.5vh, 15px)', borderRadius: '15px', borderBottom: `2px solid ${th.secondary}` }}>
+                        <div style={{ fontSize: 'clamp(8px, 1.5vh, 10px)', color: 'rgba(255,255,255,0.5)', marginBottom: '5px' }}>REWARD</div>
+                        <div style={{ fontSize: 'clamp(16px, 3vh, 24px)', color: th.primary, fontWeight: 'bold' }}><GoldCoin size="1.2em" /> {coins}</div>
                     </div>
                 </div>
 
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vh, 12px)' }}>
                     <button onClick={onStart} style={{
-                        width: '100%', padding: '18px',
+                        width: '100%', padding: 'clamp(12px, 2.5vh, 18px)',
                         background: `linear-gradient(to bottom, ${th.primary}, ${th.primary}dd)`,
                         border: 'none',
                         color: '#000',
-                        fontSize: '20px',
+                        fontSize: 'clamp(14px, 2.5vh, 20px)',
                         fontWeight: '900',
                         borderRadius: '12px',
                         cursor: 'pointer',
@@ -1558,12 +1531,12 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
 
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <button onClick={onMapSelect} style={{
-                            flex: 1, padding: '14px',
+                            flex: 1, padding: 'clamp(10px, 2vh, 14px)',
                             background: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)',
                             color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
                         }}>{t.mapsButton}</button>
                         <button onClick={onHome} style={{
-                            flex: 1, padding: '14px',
+                            flex: 1, padding: 'clamp(10px, 2vh, 14px)',
                             background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.1)',
                             color: '#FFF', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold'
                         }}>{t.home}</button>
@@ -1580,7 +1553,7 @@ function CongratulationsPopup({ level, coins, onStart, onMapSelect, onHome, lang
     );
 }
 
-// WIN POPUP (CHAMPION) - Transparent, Clean Design
+// WIN POPUP (CHAMPION) - Transparent, Simple, Elegant, Animated
 function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang, mapType = 'highway' }) {
     const t = translations[lang];
 
@@ -1588,106 +1561,107 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
         <div style={{
             position: 'fixed', top: 0, left: 0,
             width: '100vw', height: '100vh',
-            background: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(20px)',
+            background: 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             zIndex: 5000,
-            fontFamily: '"Bungee", "Helvetica", sans-serif'
+            fontFamily: '"Segoe UI", "Roboto", "Helvetica", sans-serif'
         }}>
             <Confetti />
 
             <div style={{
-                position: 'relative',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                padding: '35px 25px',
-                width: 'min(85%, 380px)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(40px)',
-                border: '1px solid rgba(255, 215, 0, 0.3)',
-                borderRadius: '40px',
-                boxShadow: '0 40px 100px rgba(0,0,0,0.5)',
-                animation: 'victorySlide 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
+                padding: '30px 25px',
+                width: 'min(85%, 340px)',
+                background: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '24px',
+                border: '1px solid rgba(255, 215, 0, 0.4)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                animation: 'slideUpBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                gap: '15px'
             }}>
-                <div style={{ fontSize: '80px', marginBottom: '5px', filter: 'drop-shadow(0 0 30px gold)' }}>🏆</div>
+                <div style={{
+                    fontSize: '70px',
+                    marginBottom: '5px',
+                    filter: 'drop-shadow(0 5px 15px rgba(0,0,0,0.8))',
+                    animation: 'gentleFloat 3s ease-in-out infinite'
+                }}>🏆</div>
 
                 <h1 style={{
-                    fontSize: 'clamp(28px, 8vw, 48px)',
+                    fontSize: '32px',
                     fontWeight: '900',
-                    color: 'gold',
+                    color: '#FFD700',
                     margin: '0',
                     textAlign: 'center',
                     textTransform: 'uppercase',
                     letterSpacing: '4px',
-                    textShadow: '3px 3px 0px #000'
+                    textShadow: '0 0 15px rgba(255,215,0,0.8), 2px 2px 5px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                    animation: 'shimmerText 2s infinite alternate'
                 }}>
                     {t.champion}
                 </h1>
 
-                <p style={{
-                    fontSize: '14px',
-                    color: '#FFF',
-                    letterSpacing: '5px',
-                    margin: '8px 0 25px 0',
-                    fontWeight: 'bold',
-                    opacity: 0.7
-                }}>
-                    WORLD CHAMPION
-                </p>
+                <div style={{ width: '100%', height: '2px', background: 'rgba(255,255,255,0.4)', margin: '5px 0', boxShadow: '0 2px 5px rgba(0,0,0,0.8)' }} />
 
-                <div style={{
-                    width: '100%',
-                    background: 'rgba(255,255,255,0.03)',
-                    borderRadius: '24px',
-                    padding: '25px 20px',
-                    marginBottom: '35px',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '15px'
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>TOTAL SCORE</span>
-                        <span style={{ color: 'gold', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(255, 215, 0, 0.3)' }}>{score}</span>
-                    </div>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: '#FFF', fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>Score</span>
+                    <span style={{ color: '#FFF', fontSize: '24px', fontWeight: '900', textShadow: '2px 2px 4px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>{score}</span>
+                </div>
 
-                    <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>MILESTONES</span>
-                        <span style={{ color: '#FFF', fontSize: '22px', fontWeight: '950' }}>500km</span>
-                    </div>
-
-                    <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '900', letterSpacing: '2px' }}>BONUS COINS</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '20px' }}>🪙</span>
-                            <span style={{ color: '#00E5FF', fontSize: '22px', fontWeight: '950', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>{coins}</span>
-                        </div>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: '#FFF', fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>Coins</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span style={{ fontSize: '18px', filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.9))' }}><GoldCoin size="1.2em" /></span>
+                        <span style={{ color: '#FFFFFF', fontSize: '24px', fontWeight: '900', textShadow: '0 0 10px rgba(255,255,255,0.8), 2px 2px 4px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>{coins}</span>
                     </div>
                 </div>
 
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <button onClick={onRestart} style={{
-                        width: '100%', padding: '22px',
-                        background: 'linear-gradient(to bottom, gold, #DAA520)',
-                        border: 'none', color: '#000',
-                        fontSize: '24px', fontWeight: '900',
-                        borderRadius: '16px', cursor: 'pointer',
-                        boxShadow: '0 8px 0 #B8860B'
-                    }}>
-                        {t.playAgain}
-                    </button>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>MAPS</button>
-                        <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>HOME</button>
-                    </div>
+                <div style={{ width: '100%', height: '2px', background: 'rgba(255,255,255,0.4)', margin: '5px 0', boxShadow: '0 2px 5px rgba(0,0,0,0.8)' }} />
+
+                <button onClick={onRestart} style={{
+                    width: '100%', padding: '16px',
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    border: 'none', color: '#000',
+                    fontSize: '16px', fontWeight: '900',
+                    borderRadius: '14px', cursor: 'pointer',
+                    letterSpacing: '1.5px',
+                    animation: 'pulseButton 2s infinite',
+                    transition: 'transform 0.1s'
+                }}
+                    onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
+                    onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                    {t.playAgain}
+                </button>
+
+                <div style={{ display: 'flex', gap: '15px', width: '100%' }}>
+                    <button onClick={onMapSelect} style={{
+                        flex: 1, padding: '12px', background: 'rgba(255,255,255,0.1)',
+                        border: '1px solid rgba(255,255,255,0.2)', color: '#FFF', borderRadius: '12px',
+                        fontSize: '14px', fontWeight: '600', cursor: 'pointer',
+                        transition: 'background 0.2s'
+                    }}
+                        onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                        onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                    >MAPS</button>
+
+                    <button onClick={onHome} style={{
+                        flex: 1, padding: '12px', background: 'rgba(255,255,255,0.1)',
+                        border: '1px solid rgba(255,255,255,0.2)', color: '#FFF', borderRadius: '12px',
+                        fontSize: '14px', fontWeight: '600', cursor: 'pointer',
+                        transition: 'background 0.2s'
+                    }}
+                        onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                        onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                    >HOME</button>
                 </div>
             </div>
 
             <style>{`
-                @keyframes victorySlide { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                @keyframes slideUpBounce { 0% { transform: translateY(60px) scale(0.9); opacity: 0; } 60% { transform: translateY(-10px) scale(1.02); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+                @keyframes gentleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+                @keyframes shimmerText { 0% { filter: brightness(1); } 100% { filter: brightness(1.4); } }
+                @keyframes pulseButton { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,215,0,0); } 50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(255,215,0,0.5); } }
             `}</style>
         </div>
     );
@@ -1726,6 +1700,31 @@ const Confetti = () => {
     );
 }
 
+// Pure CSS Gold Coin to fix iOS displaying silver coins for the default emoji
+const GoldCoin = ({ size = "1em" }) => (
+    <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle at 30% 30%, #FFF59D 0%, #FFD700 40%, #F57F17 80%)',
+        border: '1px solid #B8860B',
+        boxShadow: 'inset 0 0 4px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.5)',
+        color: '#B8860B',
+        fontWeight: '900',
+        fontSize: `calc(${size} * 0.6)`,
+        fontFamily: 'serif',
+        textShadow: '1px 1px 0px rgba(255,255,255,0.6)',
+        boxSizing: 'border-box',
+        verticalAlign: 'middle',
+        margin: '0 4px'
+    }}>
+        $
+    </div>
+);
+
 
 // GAME COMPONENT WITH PROPER CAR ENGINE SOUND
 // tutorialShown flag removed.
@@ -1734,7 +1733,7 @@ const Confetti = () => {
 
 function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSettingsChange, lang }) {
     const t = translations[lang];
-    const [screen, setScreen] = useState("tutorial");
+    const [screen, setScreen] = useState("countdown");
 
     const [count, setCount] = useState(3);
     const [distance, setDistance] = useState(0);
@@ -1745,9 +1744,20 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     const [showCongrats, setShowCongrats] = useState(false);
     const [currentLevel, setCurrentLevel] = useState(1); // 1=100km, 2=200km ... 5=500km
     const [earnedCoins, setEarnedCoins] = useState(0);
+    const [milestoneToast, setMilestoneToast] = useState(null);
+
+    const checkIsMobile = () => {
+        const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const isSmallScreen = window.innerWidth <= 1024;
+        return isMobileUA || (isTouch && isSmallScreen);
+    };
+
     const [isMobile, setIsMobile] = useState(() => {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        return checkIsMobile();
     });
+
+
 
     const [showSettings, setShowSettings] = useState(false);
 
@@ -1772,6 +1782,12 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
     const engineOscillatorRef = useRef(null);
     const engineGainRef = useRef(null);
 
+    // Music Refs
+    const musicOscillatorRef = useRef(null);
+    const musicGainRef = useRef(null);
+    const musicIntervalRef = useRef(null);
+    const musicNoteIndexRef = useRef(0);
+
     // Persistent Game State Refs
     const stateRef = useRef({
         distance: 0,
@@ -1781,6 +1797,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         enemies: [],
         coins: [],
         coinsThisLevel: 0,
+        score: 0,
+        earnedCoins: 0,
         keys: {},
         roadOffset: 0,
         touchStartX: null,
@@ -1796,7 +1814,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
+            setIsMobile(checkIsMobile());
         };
         checkMobile();
 
@@ -1808,7 +1826,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             });
 
             // Re-check mobile state specifically for resize logic
-            const mobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const mobile = checkIsMobile();
             // We still call checkMobile() to update state for render cycle
             checkMobile();
 
@@ -1849,7 +1867,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         const ctx = audioContextRef.current;
 
         // Start engine sound when playing
-        if (screen === "play" && speed > 0) {
+        if (screen === "play" && speed > 0 && !isPaused) {
             if (!engineOscillatorRef.current) {
                 try {
                     // Create realistic engine sound using multiple oscillators
@@ -1928,7 +1946,94 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 } catch (e) { }
             }
         };
-    }, [speed, screen, settings.audioEnabled]);
+    }, [speed, screen, settings.audioEnabled, isPaused]);
+
+    // Background Music System (8-bit style retro racing music)
+    useEffect(() => {
+        if (!settings.musicEnabled) {
+            if (musicIntervalRef.current) clearInterval(musicIntervalRef.current);
+            if (musicOscillatorRef.current) {
+                try { musicOscillatorRef.current.stop(); } catch (e) { }
+                musicOscillatorRef.current = null;
+            }
+            return;
+        }
+
+        // Initialize audio context if not already done by engine sound
+        if (!audioContextRef.current) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioContextRef.current = new AudioContext();
+            } catch (e) {
+                console.log("Audio not supported");
+                return;
+            }
+        }
+
+        const ctx = audioContextRef.current;
+
+        if (screen === "play" && !isPaused) {
+            if (!musicOscillatorRef.current) {
+                try {
+                    const osc = ctx.createOscillator();
+                    const filter = ctx.createBiquadFilter();
+                    const gain = ctx.createGain();
+
+                    osc.type = 'sawtooth'; // Deep synth wave
+
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 400; // Deep bass cutoff
+                    filter.Q.value = 2; // Slight resonance for "plucky" sound
+
+                    gain.gain.value = 0.1; // Balanced background volume
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start();
+                    musicOscillatorRef.current = osc;
+                    musicOscillatorRef.current._filter = filter;
+                    musicGainRef.current = gain;
+
+                    // Driving Cyberpunk-style Synth Bassline (E2, G2, A2)
+                    const freqs = [82.41, 82.41, 82.41, 82.41, 98.00, 98.00, 110.00, 110.00];
+                    musicNoteIndexRef.current = 0;
+
+                    musicIntervalRef.current = setInterval(() => {
+                        if (musicOscillatorRef.current && audioContextRef.current.state === 'running') {
+                            const f = freqs[musicNoteIndexRef.current % freqs.length];
+
+                            musicOscillatorRef.current.frequency.setValueAtTime(f, ctx.currentTime);
+
+                            // Filter envelope: "plucks" the filter open and quickly closes it
+                            musicOscillatorRef.current._filter.frequency.setValueAtTime(900, ctx.currentTime);
+                            musicOscillatorRef.current._filter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.1);
+
+                            musicNoteIndexRef.current++;
+                        }
+                    }, 140); // Steady driving tempo
+                } catch (e) {
+                    console.log("Error starting music:", e);
+                }
+            }
+        } else {
+            // Stop music if not playing
+            if (musicIntervalRef.current) clearInterval(musicIntervalRef.current);
+            if (musicOscillatorRef.current) {
+                try { musicOscillatorRef.current.stop(); } catch (e) { }
+                musicOscillatorRef.current = null;
+            }
+        }
+
+        return () => {
+            if (musicIntervalRef.current) clearInterval(musicIntervalRef.current);
+            if (musicOscillatorRef.current) {
+                try { musicOscillatorRef.current.stop(); } catch (e) { }
+                musicOscillatorRef.current = null;
+            }
+        };
+    }, [screen, isPaused, settings.musicEnabled]);
 
     const { w: W, h: H } = canvasSize;
 
@@ -1955,15 +2060,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         }
     }, [screen]);
 
-    // Tutorial auto-advance logic
-    useEffect(() => {
-        if (screen === "tutorial") {
-            const timer = setTimeout(() => {
-                setScreen("countdown");
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [screen]);
+
 
     // Countdown logic
     useEffect(() => {
@@ -1980,7 +2077,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
     // Game logic
     useEffect(() => {
-        if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
+        if (screen !== "play" && screen !== "countdown" && screen !== "tutorial" && screen !== "finish" && screen !== "gameover") return;
 
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -2012,40 +2109,119 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         };
 
         const drawCar = (x, y, w, h, color, isPlayer = false, isOpposite = false) => {
-            ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
+            // Drop Shadow for 3D effect
+            ctx.shadowColor = 'rgba(0,0,0,0.4)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
 
-            // Windshield
-            ctx.fillStyle = isPlayer ? 'rgba(135, 206, 235, 0.7)' : 'rgba(100, 100, 150, 0.7)';
-            if (isOpposite) {
-                ctx.fillRect(x + 5, y + h - 40, w - 10, h * 0.35); // Windshield at bottom for opposite
-            } else {
-                ctx.fillRect(x + 5, y + 8, w - 10, h * 0.35); // Windshield at top for normal
-            }
+            // Car Body with rounded corners
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            const r = 8; // Border radius
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.fill();
+
+            // Reset shadow so it doesn't affect other elements
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+
+            // Roof (darker tint to create depth)
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.fillRect(x + 6, y + h * 0.25, w - 12, h * 0.5);
+
+            // Front Windshield
+            ctx.fillStyle = isPlayer ? 'rgba(135, 206, 235, 0.9)' : 'rgba(80, 80, 100, 0.9)';
+            ctx.beginPath();
+            ctx.moveTo(x + 6, y + h * 0.25);
+            ctx.lineTo(x + w - 6, y + h * 0.25);
+            ctx.lineTo(x + w - 10, y + h * 0.12);
+            ctx.lineTo(x + 10, y + h * 0.12);
+            ctx.fill();
+
+            // Rear Window
+            ctx.beginPath();
+            ctx.moveTo(x + 6, y + h * 0.75);
+            ctx.lineTo(x + w - 6, y + h * 0.75);
+            ctx.lineTo(x + w - 10, y + h * 0.88);
+            ctx.lineTo(x + 10, y + h * 0.88);
+            ctx.fill();
 
             // Wheels
-            ctx.fillStyle = '#000';
-            ctx.fillRect(x - 4, y + 12, 6, 16);
-            ctx.fillRect(x + w - 2, y + 12, 6, 16);
-            ctx.fillRect(x - 4, y + h - 28, 6, 16);
-            ctx.fillRect(x + w - 2, y + h - 28, 6, 16);
+            ctx.fillStyle = '#111';
+            const wheelW = 6;
+            const wheelH = 16;
+            ctx.fillRect(x - wheelW / 2 + 1, y + 10, wheelW, wheelH); // Top Left
+            ctx.fillRect(x + w - wheelW / 2 - 1, y + 10, wheelW, wheelH); // Top Right
+            ctx.fillRect(x - wheelW / 2 + 1, y + h - 26, wheelW, wheelH); // Bottom Left
+            ctx.fillRect(x + w - wheelW / 2 - 1, y + h - 26, wheelW, wheelH); // Bottom Right
 
-            // Lights
-            if (isPlayer) {
-                ctx.fillStyle = '#FFFF00'; // Headlights
-                ctx.fillRect(x + 8, y - 2, 10, 3);
-                ctx.fillRect(x + w - 18, y - 2, 10, 3);
-                ctx.fillStyle = '#FF0000'; // Taillights
-                ctx.fillRect(x + 8, y + h - 1, 10, 3);
-                ctx.fillRect(x + w - 18, y + h - 1, 10, 3);
-            } else if (isOpposite) {
-                ctx.fillStyle = '#FFFF00'; // Headlights facing down
-                ctx.fillRect(x + 8, y + h - 2, 10, 3);
-                ctx.fillRect(x + w - 18, y + h - 2, 10, 3);
+            // Lights & Glow Effects
+            if (!isOpposite) {
+                const showHeadlights = mapType === 'city' || mapType === 'night' || mapType === 'jungle';
+
+                if (showHeadlights) {
+                    // Headlights Glow
+                    ctx.fillStyle = '#FFFFDD';
+                    ctx.shadowColor = '#FFFF00';
+                    ctx.shadowBlur = 10;
+                    ctx.fillRect(x + 6, y - 2, 10, 4);
+                    ctx.fillRect(x + w - 16, y - 2, 10, 4);
+                    ctx.shadowBlur = 0;
+
+                    // Headlight Beams (Visible on road)
+                    ctx.fillStyle = 'rgba(255, 255, 200, 0.12)';
+                    ctx.beginPath();
+                    ctx.moveTo(x + 6, y - 2);
+                    ctx.lineTo(x - 15, y - Math.min(60, h));
+                    ctx.lineTo(x + 16, y - Math.min(60, h));
+                    ctx.lineTo(x + 16, y - 2);
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.moveTo(x + w - 16, y - 2);
+                    ctx.lineTo(x + w - 16, y - Math.min(60, h));
+                    ctx.lineTo(x + w + 15, y - Math.min(60, h));
+                    ctx.lineTo(x + w - 6, y - 2);
+                    ctx.fill();
+                }
+
+                // Taillights Glow
+                ctx.fillStyle = '#FF3333';
+                ctx.shadowColor = '#FF0000';
+                ctx.shadowBlur = 12;
+                ctx.fillRect(x + 6, y + h - 2, 10, 4);
+                ctx.fillRect(x + w - 16, y + h - 2, 10, 4);
+                ctx.shadowBlur = 0;
             } else {
-                ctx.fillStyle = '#FF0000'; // Taillights facing up
-                ctx.fillRect(x + 8, y + h - 2, 10, 3);
-                ctx.fillRect(x + w - 18, y + h - 2, 10, 3);
+                const showHeadlights = mapType === 'city' || mapType === 'night' || mapType === 'jungle';
+
+                if (showHeadlights) {
+                    // Headlights facing down (if any car is opposite)
+                    ctx.fillStyle = '#FFFFDD';
+                    ctx.shadowColor = '#FFFF00';
+                    ctx.shadowBlur = 10;
+                    ctx.fillRect(x + 6, y + h - 2, 10, 4);
+                    ctx.fillRect(x + w - 16, y + h - 2, 10, 4);
+                    ctx.shadowBlur = 0;
+                }
+
+                // Taillights facing up
+                ctx.fillStyle = '#FF3333';
+                ctx.shadowColor = '#FF0000';
+                ctx.shadowBlur = 12;
+                ctx.fillRect(x + 6, y - 2, 10, 4);
+                ctx.fillRect(x + w - 16, y - 2, 10, 4);
+                ctx.shadowBlur = 0;
             }
         };
 
@@ -2067,34 +2243,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             ctx.fill();
         };
 
-        const drawFinishLine = (y) => {
-            const size = 40; // Larger checkered pattern
-            const height = 30; // Thicker finish line
-            const cols = Math.floor(roadWidth / size);
-
-            // Add glowing effect
-            ctx.shadowColor = '#FFD700';
-            ctx.shadowBlur = 20;
-
-            // Draw checkered pattern
-            for (let i = 0; i < cols; i++) {
-                ctx.fillStyle = i % 2 === 0 ? "#fff" : "#000";
-                ctx.fillRect(roadLeft + i * size, y, size, height);
-            }
-
-            // Reset shadow
-            ctx.shadowBlur = 0;
-
-            // Add "FINISH" text above the line
-            ctx.fillStyle = '#FFD700';
-            ctx.font = 'bold 48px Arial';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = '#000';
-            ctx.shadowBlur = 10;
-            ctx.fillText('🏁 FINISH 🏁', W / 2, y - 20);
-            ctx.shadowBlur = 0;
-            ctx.textAlign = 'left';
-        };
 
         const drawHouse = (x, y, scale = 1) => {
             const w = 60 * scale;
@@ -2512,42 +2660,110 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
             }
 
-            // Draw finish line ONLY at the final milestone (300000 distance units = 500km)
+            // Draw finish line at exactly 50000 units (Level 5 completion)
             {
-                const finalTarget = 300000;
-                const approachStart = finalTarget - 1000;
-                if (s.distance > approachStart && s.distance < finalTarget + 500) {
-                    const finishY = H - ((s.distance - approachStart) * 0.3);
-                    if (finishY > -50 && finishY < H) {
-                        drawFinishLine(finishY);
+                const finalTarget = 50000;
+                const playerY = H - (isMobile ? 180 : 220);
+                const finishY = playerY - (finalTarget - s.distance);
+
+                if (finishY > -100 && finishY < H + 100) {
+                    const cols = 10;
+                    const blockW = roadWidth / cols;
+                    const blockH = 40;
+                    for (let i = 0; i < cols; i++) {
+                        ctx.fillStyle = i % 2 === 0 ? '#FFFFFF' : '#111111';
+                        ctx.fillRect(roadLeft + i * blockW, finishY, blockW + 1, blockH / 2);
+                        ctx.fillStyle = i % 2 === 0 ? '#111111' : '#FFFFFF';
+                        ctx.fillRect(roadLeft + i * blockW, finishY + blockH / 2, blockW + 1, blockH / 2);
                     }
                 }
             }
 
-            if (screen === "play" || screen === "countdown") {
+            if (screen !== "menu") {
                 s.coins.forEach(c => {
                     ctx.save();
                     ctx.translate(c.x + 15, c.y + 15);
                     ctx.rotate(c.rotation || 0);
-                    ctx.fillStyle = '#FFD700';
+
+                    // Outer Gradient Base
+                    const grad = ctx.createRadialGradient(-5, -5, 2, 0, 0, 15);
+                    grad.addColorStop(0, '#FFF59D');
+                    grad.addColorStop(0.4, '#FFD700');
+                    grad.addColorStop(0.8, '#F57F17');
+                    ctx.fillStyle = grad;
                     ctx.beginPath();
                     ctx.arc(0, 0, 15, 0, Math.PI * 2);
                     ctx.fill();
+
+                    // Outer Edge
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeStyle = '#B8860B';
+                    ctx.stroke();
+
+                    // Inner engrave circle
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 11, 0, Math.PI * 2);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(184, 134, 11, 0.5)';
+                    ctx.stroke();
+
+                    // The '$' Symbol
+                    ctx.fillStyle = '#B8860B';
+                    ctx.font = '900 16px "Times New Roman", serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+
+                    // Subtle white highlight text shadow to mimic CSS text-shadow
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+                    ctx.shadowBlur = 0;
+
+                    ctx.fillText('$', 0, 1);
+
                     ctx.restore();
                     if (screen === "play") c.rotation = (c.rotation || 0) + 0.1;
                 });
             }
 
-            const playerY = H - (isMobile ? 120 : 150);
+            const playerY = H - (isMobile ? 180 : 220);
             drawCar(s.carX, playerY, carW, carH, '#FF3366', true);
 
-            if (screen === "play" || screen === "countdown") {
+            if (screen !== "menu") {
                 s.enemies.forEach(e => {
                     drawCar(e.x, e.y, e.w, e.h, e.color, false, e.isOpposite);
                 });
             }
 
             ctx.restore(); // End clipping
+        };
+
+        const playCoinSound = () => {
+            if (!settings.audioEnabled) return;
+            const ctx = audioContextRef.current;
+            if (!ctx || ctx.state !== 'running') return;
+
+            try {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+
+                // Classic coin sound: quick jump in frequency (B5 to E6)
+                osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+                osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.08);
+
+                // Quick volume envelope
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
+            } catch (e) { }
         };
 
         const loop = () => {
@@ -2559,9 +2775,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             const s = stateRef.current;
 
             if (screen === "play") {
-                if (s.keys['ArrowUp'] || s.keys['w'] || s.keys['W'] || s.touchDirection === 'up') {
+                if (s.keys['ArrowUp'] || s.keys['w'] || s.keys['W'] || s.touchDirection === 'up' || s.btnUp) {
                     s.targetSpeed = Math.min(s.targetSpeed + 0.15, 10); // Standard speed
-                } else if (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down') {
+                } else if (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down' || s.btnDown) {
                     s.targetSpeed = Math.max(s.targetSpeed - 0.25, 2);
                 } else {
                     if (s.targetSpeed > 5) {
@@ -2595,12 +2811,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         setScore(finalScore);
                         setShowWinPopup(true);
                         setScreen("finish");
+                        return; // Game ends here
                     } else {
-                        // Show congratulations popup, pause the game
-                        setShowCongrats(true);
-                        setScreen("finish");
+                        // Show toast message instead of popup and continue game
+                        s._levelTarget = (completedLevel + 1) * 10000;
+                        setMilestoneToast(`🎉 ${completedLevel * 100}KM COMPLETE! 🎉`);
+                        setTimeout(() => setMilestoneToast(null), 3500);
                     }
-                    return;
+                    // Allow loop to continue naturally
                 }
 
                 // BALANCED TRAFFIC MODE: Slightly lower spawn rate for "thoda easy" feel
@@ -2609,15 +2827,13 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     const enemyColors = ['#4169E1', '#FF1493', '#32CD32', '#FF8C00', '#9370DB', '#00CED1'];
 
                     let enemyX;
-                    let isOpp = false;
+                    let isOpp = false; // Always false so no cars are flipped
                     if (slot % 2 === 0) {
                         const lane = slot / 2;
                         enemyX = roadLeft + lane * laneWidth + (laneWidth - carW) / 2;
-                        isOpp = (lane === 0);
                     } else {
                         const marker = (slot + 1) / 2;
                         enemyX = roadLeft + marker * laneWidth - (carW / 2);
-                        isOpp = (marker === 1);
                     }
 
                     // Stricter spacing to ensure "sabhi car saath me nahi aani chahiye"
@@ -2631,7 +2847,6 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         if (!overlapsHorizontally && !laneOccupied) {
                             // Slower but consistent enemy speeds
                             const baseEnemySpeed = 3 + Math.random() * 1.5;
-
                             s.enemies.push({
                                 x: enemyX, y: -150, w: carW, h: carH,
                                 color: enemyColors[Math.floor(Math.random() * enemyColors.length)],
@@ -2652,13 +2867,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
                 s.coins.forEach(c => {
                     c.y += s.speed + 2;
-                    const playerY = H - (isMobile ? 120 : 150);
+                    const playerY = H - (isMobile ? 180 : 220);
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, c)) {
                         c.collected = true;
                         s.earnedCoins += 1;
                         s.coinsThisLevel = (s.coinsThisLevel || 0) + 1;
                         setEarnedCoins(s.earnedCoins);
                         setCoins(prev => prev + 1); // Real-time cumulative balance
+                        playCoinSound();
                     }
                 });
                 s.coins = s.coins.filter(c => !c.collected && c.y < H + 100);
@@ -2677,7 +2893,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         setScore(s.score);
                     }
 
-                    const playerY = H - (isMobile ? 120 : 150);
+                    const playerY = H - (isMobile ? 180 : 220);
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, e)) {
                         setScore(s.score);
                         setEarnedCoins(s.earnedCoins);
@@ -2687,10 +2903,10 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
                 s.enemies = s.enemies.filter(e => e.y < H + 100);
 
-                if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left') {
+                if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left' || s.btnLeft) {
                     if (s.carX > roadLeft + 10) s.carX -= 5;
                 }
-                if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D'] || s.touchDirection === 'right') {
+                if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D'] || s.touchDirection === 'right' || s.btnRight) {
                     if (s.carX + carW < roadRight - 10) s.carX += 5;
                 }
 
@@ -2704,10 +2920,10 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             } else if (screen === "countdown" || screen === "tutorial") {
                 stateRef.current.roadOffset = (stateRef.current.roadOffset + 5) % 70;
 
-                if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left') {
+                if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left' || s.btnLeft) {
                     if (s.carX > roadLeft + 10) s.carX -= 5;
                 }
-                if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D'] || s.touchDirection === 'right') {
+                if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D'] || s.touchDirection === 'right' || s.btnRight) {
                     if (s.carX + carW < roadRight - 10) s.carX += 5;
                 }
             }
@@ -2717,6 +2933,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         };
 
         const handleKeyDown = (e) => {
+            if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                audioContextRef.current.resume();
+            }
             stateRef.current.keys[e.key] = true;
             if (e.key === 'v' || e.key === 'V') {
                 setViewAngle(prev => (prev === "top" ? "side" : prev === "side" ? "chase" : "top"));
@@ -2727,99 +2946,16 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
             stateRef.current.keys[e.key] = false;
         };
 
-        // Multi-touch handling: Update state based on all active touches
-        const updateTouchControls = (touches) => {
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            const s = stateRef.current;
-
-            // Reset state before checking all current touches
-            s.keys['ArrowLeft'] = false;
-            s.keys['ArrowRight'] = false;
-            s.touchDirection = null;
-
-            // Iterate over all active touches to set current state
-            for (let i = 0; i < touches.length; i++) {
-                const x = touches[i].clientX;
-                const y = touches[i].clientY;
-
-                if (y > h / 2) {
-                    // Bottom half: Steering
-                    if (x < w / 2) s.keys['ArrowLeft'] = true;
-                    else s.keys['ArrowRight'] = true;
-                } else {
-                    // Top half: Speed/Brake
-                    if (x < w / 2) s.touchDirection = 'down'; // Brake
-                    else s.touchDirection = 'up'; // Speed up
-                }
-            }
-        };
-
-        const handleTouchStart = (e) => {
-            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
-            if (e.target.closest('[data-ctrl]')) return;
-            e.preventDefault(); // Prevent scrolling/zooming during play
-            updateTouchControls(e.touches);
-        };
-
-        const handleTouchMove = (e) => {
-            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
-            if (e.target.closest('[data-ctrl]')) return;
-            e.preventDefault();
-            updateTouchControls(e.touches);
-        };
-
-        const handleTouchEnd = (e) => {
-            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
-            // Always update because a finger was lifted
-            updateTouchControls(e.touches);
-        };
-
-        // MOUSE CONTROLS (Mirrors Touch for Desktop 'Mobile View' testing)
-        let mouseDown = false;
-        const handleMouseDown = (e) => {
-            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
-            mouseDown = true;
-            updateTouchControls([{ clientX: e.clientX, clientY: e.clientY }]);
-        };
-
-        const handleMouseMove = (e) => {
-            if (screen !== "play" && screen !== "countdown" && screen !== "tutorial") return;
-            if (!mouseDown) return;
-            updateTouchControls([{ clientX: e.clientX, clientY: e.clientY }]);
-        };
-
-        const handleMouseUp = (e) => {
-            mouseDown = false;
-            const s = stateRef.current;
-            s.keys['ArrowLeft'] = false;
-            s.keys['ArrowRight'] = false;
-            s.touchDirection = null;
-        };
+        // 4-ZONE TOUCH CONTROLS (MULTI-TOUCH): Now handled by onPointerDown/onPointerUp in UI buttons
 
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
-        window.addEventListener("touchstart", handleTouchStart, { passive: false });
-        window.addEventListener("touchmove", handleTouchMove, { passive: false });
-        window.addEventListener("touchend", handleTouchEnd);
-
-        // Add Mouse Listeners for fallback
-        window.addEventListener("mousedown", handleMouseDown);
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
 
         loop(); // Start the game loop
 
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
-            window.removeEventListener("touchstart", handleTouchStart);
-            window.removeEventListener("touchmove", handleTouchMove);
-            window.removeEventListener("touchend", handleTouchEnd);
-
-            window.removeEventListener("mousedown", handleMouseDown);
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
             if (rafRef.current) {
                 cancelAnimationFrame(rafRef.current);
             }
@@ -2829,6 +2965,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
 
     const restart = () => {
+        logAnalyticsEvent('restart_game');
         stateRef.current = {
             distance: 0,
             speed: 4,
@@ -2853,7 +2990,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
         setShowWinPopup(false);
         setShowCongrats(false);
         setCurrentLevel(1);
-        setScreen("tutorial");
+        setScreen("countdown");
     };
 
     // Continue to next level after Congratulations popup - preserve car & road state
@@ -2955,7 +3092,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 boxShadow: '0 5px 15px rgba(74, 222, 128, 0.4)',
                             }}
                         >
-                            ▶️ RESUME
+                            RESUME
                         </button>
                         <button
                             onClick={() => { setIsPaused(false); restart(); }}
@@ -2971,7 +3108,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 boxShadow: '0 5px 15px rgba(102, 126, 234, 0.4)',
                             }}
                         >
-                            🔄 RESTART
+                            RESTART
                         </button>
                         <button
                             onClick={() => { setIsPaused(false); onHome(); }}
@@ -2987,7 +3124,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 boxShadow: '0 5px 15px rgba(0,0,0,0.4)',
                             }}
                         >
-                            🏠 HOME
+                            HOME
                         </button>
                     </div>
                 </div>
@@ -3016,6 +3153,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             width: '100%',
                             height: '100%',
                             pointerEvents: 'none',
+                            // HUD Layout
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
@@ -3023,6 +3161,41 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             boxSizing: 'border-box',
                             zIndex: 10,
                         }}>
+                            {/* Milestone Toast Message */}
+                            {milestoneToast && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: 'clamp(30px, 8vh, 60px)',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    zIndex: 50,
+                                    pointerEvents: 'none',
+                                    animation: 'milestoneElegant 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    backdropFilter: 'blur(20px)',
+                                    WebkitBackdropFilter: 'blur(20px)',
+                                    border: '1px solid rgba(255, 215, 0, 0.4)',
+                                    borderRadius: '50px',
+                                    padding: 'clamp(10px, 2vh, 15px) clamp(25px, 5vw, 40px)',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.05)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <div style={{
+                                        fontSize: 'clamp(20px, 5vw, 32px)',
+                                        fontWeight: '700',
+                                        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+                                        letterSpacing: '1px',
+                                        color: '#FFF',
+                                        textShadow: '0 2px 5px rgba(0,0,0,0.5)',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        {milestoneToast}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Top Bar */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
                                 {/* Left Stats */}
@@ -3032,12 +3205,12 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                     gap: '5px',
                                     color: '#fff',
                                     textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                                    fontSize: 'clamp(16px, 3.5vw, 28px)',
+                                    fontSize: 'clamp(14px, 4vmin, 24px)',
                                     fontWeight: 'bold',
                                     textAlign: 'left',
                                     background: 'rgba(0,0,0,0.4)',
-                                    padding: '10px 15px',
-                                    borderRadius: '15px',
+                                    padding: 'clamp(4px, 1.5vh, 10px) clamp(8px, 2vw, 15px)',
+                                    borderRadius: 'clamp(10px, 2vmin, 15px)',
                                     border: '1px solid rgba(255,255,255,0.1)',
                                     backdropFilter: 'blur(4px)',
                                 }}>
@@ -3051,48 +3224,14 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 {/* Right Stats: Settings, Coins & Pause */}
                                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center', pointerEvents: 'auto' }}>
 
-                                    {/* SETTINGS BUTTON - Added */}
-                                    <button
-                                        onClick={() => { setIsPaused(true); setShowSettings(true); }}
-                                        style={{
-                                            background: 'rgba(255, 255, 255, 0.1)',
-                                            border: '2px solid rgba(255, 255, 255, 0.5)',
-                                            padding: '8px 12px',
-                                            borderRadius: '50%',
-                                            cursor: 'pointer',
-                                            fontSize: 'clamp(16px, 3vw, 24px)',
-                                            color: 'white',
-                                            fontWeight: 'bold',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center', // Center icon
-                                            backdropFilter: 'blur(5px)',
-                                            transition: 'all 0.2s',
-                                            boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                                            width: 'clamp(40px, 8vw, 50px)', // Match other buttons
-                                            height: 'clamp(40px, 8vw, 50px)',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1.05)';
-                                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                                            e.currentTarget.style.borderColor = '#ffffff';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                                        }}
-                                    >
-                                        ⚙️
-                                    </button>
 
                                     <div style={{
                                         background: 'rgba(0,0,0,0.5)',
-                                        padding: '8px 15px', // Increased vertical padding
-                                        borderRadius: '20px',
+                                        padding: 'clamp(4px, 1.5vh, 8px) clamp(8px, 2vw, 15px)',
+                                        borderRadius: 'clamp(12px, 3vmin, 20px)',
                                         color: '#FFD700',
                                         fontWeight: 'bold',
-                                        fontSize: 'clamp(16px, 3vw, 24px)',
+                                        fontSize: 'clamp(14px, 4vmin, 24px)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '8px',
@@ -3101,43 +3240,144 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                         minWidth: 'fit-content',
                                         boxSizing: 'border-box',
                                     }}>
-                                        <span style={{ fontSize: '1.2em' }}>🪙</span> {earnedCoins}
+                                        <GoldCoin size="1.2em" /> {earnedCoins}
                                     </div>
 
                                     <button
                                         onClick={() => setIsPaused(true)}
+                                        onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(255,50,50,0.6), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1) translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 15px rgba(255,50,50,0.4), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
+                                        onTouchStart={(e) => { e.currentTarget.style.transform = 'scale(0.95) translateY(2px)'; e.currentTarget.style.boxShadow = '0 2px 5px rgba(255,50,50,0.4), inset 0 0 5px rgba(0,0,0,0.2)'; }}
+                                        onTouchEnd={(e) => { e.currentTarget.style.transform = 'scale(1) translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 15px rgba(255,50,50,0.4), inset 0 2px 5px rgba(255,255,255,0.5)'; }}
                                         style={{
-                                            background: 'rgba(255, 68, 68, 0.8)',
-                                            border: '2px solid #ff4444',
+                                            background: 'linear-gradient(145deg, #ff5e5e, #e60000)',
+                                            border: '2px solid #ff9999',
                                             borderRadius: '50%',
-                                            width: 'clamp(40px, 8vw, 50px)',
-                                            height: 'clamp(40px, 8vw, 50px)',
+                                            width: 'clamp(35px, 10vmin, 50px)',
+                                            height: 'clamp(35px, 10vmin, 50px)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: 'clamp(20px, 4vw, 24px)',
                                             cursor: 'pointer',
-                                            color: 'white',
-                                            boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                                            boxShadow: '0 6px 15px rgba(255,50,50,0.4), inset 0 2px 5px rgba(255,255,255,0.5)',
+                                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            outline: 'none',
+                                            WebkitTapHighlightColor: 'transparent',
+                                            zIndex: 100
                                         }}
                                     >
-                                        ⏸️
+                                        <svg width="55%" height="55%" viewBox="0 0 24 24" fill="white">
+                                            <rect x="5" y="2" width="5" height="20" rx="2" />
+                                            <rect x="14" y="2" width="5" height="20" rx="2" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
 
                             {/* Controls Hint (Bottom) */}
-                            <div style={{
-                                alignSelf: 'center',
-                                background: 'rgba(0,0,0,0.6)',
-                                padding: '5px 15px',
-                                borderRadius: '10px',
-                                color: '#fff',
-                                fontSize: 'clamp(10px, 2vw, 14px)',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                            }}>
-                                <span style={{ color: '#FFD700' }}>{t.controls}:</span> {isMobile ? '⬅ Left | Right ➡ | 🛑 Brake | 🏎️ Speed' : 'WASD/Arrows | V=View'} ({viewAngle})
-                            </div>
+                            {screen === "countdown" && (
+                                <div style={{
+                                    alignSelf: 'center',
+                                    background: 'rgba(0,0,0,0.6)',
+                                    padding: '5px 15px',
+                                    borderRadius: '10px',
+                                    color: '#fff',
+                                    fontSize: 'clamp(10px, 2vw, 14px)',
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    marginBottom: isMobile ? '100px' : '0',
+                                    pointerEvents: 'auto',
+                                }}>
+                                    <span style={{ color: '#FFD700' }}>{t.controls}:</span> {isMobile ? 'Touch zones to control' : 'WASD/Arrows'}
+                                </div>
+                            )}
+
+                            {/* Visual On-Screen Buttons for Mobile */}
+                            {isMobile && screen === "play" && (
+                                <>
+                                    {/* Left Side: Steering */}
+                                    <div data-ctrl="true" style={{
+                                        position: 'absolute',
+                                        bottom: 'clamp(42px, 8vh, 80px)',
+                                        left: 'clamp(20px, 5vw, 40px)',
+                                        display: 'flex',
+                                        gap: 'clamp(15px, 3vw, 25px)',
+                                        pointerEvents: 'auto',
+                                        zIndex: 20
+                                    }}>
+                                        <button
+                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnLeft = true; }}
+                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
+                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
+                                            style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                                        >
+                                            <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
+                                                <polygon points="65,30 35,50 65,70" fill="#FFD700" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnRight = true; }}
+                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
+                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
+                                            style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                                        >
+                                            <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
+                                                <polygon points="35,30 65,50 35,70" fill="#FFD700" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Right Side: Speed/Brake (Pedals) */}
+                                    <div data-ctrl="true" style={{
+                                        position: 'absolute',
+                                        bottom: 'clamp(42px, 8vh, 80px)',
+                                        right: 'clamp(20px, 5vw, 40px)',
+                                        display: 'flex',
+                                        gap: 'clamp(15px, 3vw, 25px)',
+                                        alignItems: 'flex-end',
+                                        pointerEvents: 'auto',
+                                        zIndex: 20
+                                    }}>
+                                        <button
+                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnDown = true; }}
+                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
+                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
+                                            style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                                        >
+                                            <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
+                                                <rect x="25" y="35" width="50" height="30" rx="8" fill="#FFD700" />
+                                                <circle cx="35" cy="43" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="45" cy="43" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="55" cy="43" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="65" cy="43" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="35" cy="57" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="45" cy="57" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="55" cy="57" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="65" cy="57" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnUp = true; }}
+                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
+                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
+                                            style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                                        >
+                                            <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
+                                                <rect x="35" y="20" width="30" height="60" rx="10" fill="#FFD700" />
+                                                <circle cx="43" cy="30" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="57" cy="30" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="43" cy="40" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="57" cy="40" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="43" cy="50" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="57" cy="50" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="43" cy="60" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="57" cy="60" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="43" cy="70" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                                <circle cx="57" cy="70" r="2.5" fill="rgba(0,0,0,0.6)" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
 
@@ -3171,8 +3411,36 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                 alignItems: 'center',
                                 padding: 'clamp(20px, 4vw, 40px)',
                                 animation: 'popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                position: 'relative'
                             }}>
+                                {/* Back Button */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: 'clamp(16px, 3vh, 24px)',
+                                    left: 'clamp(16px, 3vw, 24px)',
+                                    zIndex: 100,
+                                }}>
+                                    <button
+                                        onClick={onMapSelect}
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.1)',
+                                            border: '2px solid rgba(255, 255, 255, 0.5)',
+                                            padding: '8px 16px',
+                                            borderRadius: '20px',
+                                            cursor: 'pointer',
+                                            fontSize: 'clamp(14px, 2.5vw, 18px)',
+                                            color: 'white',
+                                            fontWeight: 'bold',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            backdropFilter: 'blur(5px)',
+                                        }}
+                                    >
+                                        ⬅️ {t.back}
+                                    </button>
+                                </div>
                                 {/* Header */}
                                 <h2 style={{
                                     color: '#fff',
@@ -3302,13 +3570,16 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     <div style={{
                         position: 'relative',
                         zIndex: 1,
-                        width: 'min(90%, 450px)',
+                        margin: 'auto',
+
+                        width: 'min(85%, 380px)',
+                        boxSizing: 'border-box',
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(40px)',
                         border: `1px solid rgba(255, 255, 255, 0.1)`,
                         borderTop: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}`,
                         borderRadius: '32px',
-                        padding: '40px 30px',
+                        padding: 'clamp(15px, 3vh, 40px) clamp(15px, 3vw, 30px)',
                         boxShadow: `0 50px 100px rgba(0,0,0,0.5)`,
                         display: 'flex',
                         flexDirection: 'column',
@@ -3317,15 +3588,15 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     }}>
                         {/* Map Icon Badge */}
                         <div style={{
-                            width: '90px',
-                            height: '90px',
+                            width: 'clamp(50px, 10vh, 90px)',
+                            height: 'clamp(50px, 10vh, 90px)',
                             background: `linear-gradient(135deg, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '48px',
-                            marginBottom: '20px',
+                            fontSize: 'clamp(24px, 5vh, 48px)',
+                            marginBottom: 'clamp(5px, 2vh, 20px)',
                             border: `4px solid ${(popupThemes[mapType] || popupThemes.highway).accent}44`,
                             animation: 'shakeIcon 3s infinite'
                         }}>
@@ -3333,7 +3604,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         </div>
 
                         <h1 style={{
-                            fontSize: 'clamp(44px, 12vw, 70px)',
+                            fontSize: 'clamp(24px, min(8vw, 6vh), 70px)',
                             fontWeight: '950',
                             margin: '0',
                             color: '#FFF',
@@ -3348,10 +3619,10 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
                         <p style={{
                             color: 'rgba(255,255,255,0.5)',
-                            fontSize: '12px',
+                            fontSize: 'clamp(9px, 1.5vh, 12px)',
                             fontWeight: 'bold',
                             letterSpacing: '5px',
-                            margin: '5px 0 35px 0',
+                            margin: 'clamp(2px, 1vh, 5px) 0 clamp(10px, 3vh, 35px) 0',
                             textTransform: 'uppercase'
                         }}>
                             CAR REPAIR NEEDED
@@ -3362,31 +3633,31 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             width: '100%',
                             display: 'grid',
                             gridTemplateColumns: '1fr 1fr',
-                            gap: '15px',
-                            marginBottom: '40px'
+                            gap: 'clamp(8px, 2vw, 15px)',
+                            marginBottom: 'clamp(20px, 5vh, 40px)'
                         }}>
-                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}` }}>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>FINAL SCORE</div>
-                                <div style={{ fontSize: '28px', color: '#FFF', fontWeight: 'black' }}>{score}</div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(10px, 3vw, 20px)', borderRadius: '16px', borderLeft: `6px solid ${(popupThemes[mapType] || popupThemes.highway).primary}` }}>
+                                <div style={{ fontSize: 'clamp(8px, 2vw, 10px)', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>FINAL SCORE</div>
+                                <div style={{ fontSize: 'clamp(18px, 5vw, 28px)', color: '#FFF', fontWeight: 'black', overflow: 'hidden', textOverflow: 'ellipsis' }}>{score}</div>
                             </div>
-                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', borderLeft: `6px solid #FFD700` }}>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>COINS LOST</div>
-                                <div style={{ fontSize: '28px', color: '#FFD700', fontWeight: 'black' }}>🪙 {earnedCoins}</div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(10px, 3vw, 20px)', borderRadius: '16px', borderLeft: `6px solid #FFD700` }}>
+                                <div style={{ fontSize: 'clamp(8px, 2vw, 10px)', color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>COINS LOST</div>
+                                <div style={{ fontSize: 'clamp(18px, 5vw, 28px)', color: '#FFD700', fontWeight: 'black', overflow: 'hidden', textOverflow: 'ellipsis' }}><GoldCoin size="1.2em" /> {earnedCoins}</div>
                             </div>
                         </div>
 
                         {/* Actions */}
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 2vh, 15px)' }}>
                             <button
                                 onClick={restart}
                                 style={{
                                     width: '100%',
-                                    padding: '20px',
+                                    padding: 'clamp(15px, 4vh, 20px)',
                                     background: `linear-gradient(to bottom, ${(popupThemes[mapType] || popupThemes.highway).primary}, ${(popupThemes[mapType] || popupThemes.highway).secondary})`,
                                     border: 'none',
                                     borderRadius: '16px',
                                     color: (popupThemes[mapType] || popupThemes.highway).accent,
-                                    fontSize: '22px',
+                                    fontSize: 'clamp(18px, 5vw, 22px)',
                                     fontWeight: '900',
                                     cursor: 'pointer',
                                     boxShadow: `0 6px 0 ${(popupThemes[mapType] || popupThemes.highway).primary}88`,
@@ -3399,8 +3670,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                             </button>
 
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button onClick={onMapSelect} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.mapsButton}</button>
-                                <button onClick={onHome} style={{ flex: 1, padding: '15px', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', cursor: 'pointer' }}>{t.home}</button>
+                                <button onClick={onMapSelect} style={{ flex: 1, padding: 'clamp(12px, 3vh, 15px)', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', fontSize: 'clamp(12px, 3.5vw, 16px)', cursor: 'pointer' }}>{t.mapsButton}</button>
+                                <button onClick={onHome} style={{ flex: 1, padding: 'clamp(12px, 3vh, 15px)', background: 'rgba(255, 255, 255, 0.05)', border: '2px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: '#FFF', fontWeight: 'bold', fontSize: 'clamp(12px, 3.5vw, 16px)', cursor: 'pointer' }}>{t.home}</button>
                             </div>
                         </div>
                     </div>
@@ -3457,6 +3728,7 @@ const Home = () => {
     });
 
     const handleSelectMap = (mapType) => {
+        logAnalyticsEvent('level_start', { level_index: mapType });
         setSelectedMap(mapType);
         setScreen("game");
     };
