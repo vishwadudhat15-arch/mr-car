@@ -1162,7 +1162,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                     flexDirection: 'column',
                     overflowY: 'auto',
                     overflowX: 'hidden',
-                    padding: 'clamp(15px, 3vh, 40px) 0',
+                    padding: 'clamp(80px, 12vh, 100px) 0 clamp(20px, 4vh, 40px) 0',
                     scrollBehavior: 'smooth',
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
@@ -1177,9 +1177,9 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                         flexWrap: 'nowrap',
                         padding: '0 clamp(10px, 2vw, 20px)',
                     }}>
-                        <span style={{ fontSize: 'clamp(18px, 6vmin, 50px)', animation: 'flagWave 2s ease-in-out infinite', opacity: 0.8 }}>🏁</span>
+                        <span style={{ fontSize: 'clamp(16px, 5vmin, 35px)', animation: 'flagWave 2s ease-in-out infinite', opacity: 0.8 }}>🏁</span>
                         <h1 style={{
-                            fontSize: 'clamp(18px, 6.5vmin, 50px)',
+                            fontSize: 'clamp(16px, 5.5vmin, 40px)',
                             marginBottom: 0,
                             marginTop: 0,
                             textAlign: 'center',
@@ -1195,7 +1195,7 @@ function MapSelection({ onSelectMap, coins, settings, onSettingsChange, lang }) 
                         }}>
                             {t.selectMap}
                         </h1>
-                        <span style={{ fontSize: 'clamp(18px, 6vmin, 50px)', animation: 'flagWave 2s ease-in-out infinite 0.5s', opacity: 0.8, transform: 'scaleX(-1)' }}>🏁</span>
+                        <span style={{ fontSize: 'clamp(16px, 5vmin, 35px)', animation: 'flagWave 2s ease-in-out infinite 0.5s', opacity: 0.8, transform: 'scaleX(-1)' }}>🏁</span>
                     </div>
 
                     <div className="map-grid-container" style={{
@@ -1571,7 +1571,7 @@ function WinPopup({ score, distance, coins, onRestart, onMapSelect, onHome, lang
             <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: '30px 25px',
-                width: 'min(85%, 340px)',
+                width: 'min(75%, 290px)',
                 background: 'rgba(0, 0, 0, 0.5)',
                 backdropFilter: 'blur(8px)',
                 borderRadius: '24px',
@@ -2108,7 +2108,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 (a.y + a.h - margin) > (b.y + margin);
         };
 
-        const drawCar = (x, y, w, h, color, isPlayer = false, isOpposite = false) => {
+        const drawCar = (x, y, w, h, color, isPlayer = false, isOpposite = false, isBraking = false) => {
             // Drop Shadow for 3D effect
             ctx.shadowColor = 'rgba(0,0,0,0.4)';
             ctx.shadowBlur = 8;
@@ -2196,11 +2196,11 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 }
 
                 // Taillights Glow
-                ctx.fillStyle = '#FF3333';
+                ctx.fillStyle = isBraking ? '#FFFFFF' : '#FF3333';
                 ctx.shadowColor = '#FF0000';
-                ctx.shadowBlur = 12;
-                ctx.fillRect(x + 6, y + h - 2, 10, 4);
-                ctx.fillRect(x + w - 16, y + h - 2, 10, 4);
+                ctx.shadowBlur = isBraking ? 25 : 12;
+                ctx.fillRect(x + (isBraking ? 4 : 6), y + h - 2, isBraking ? 14 : 10, 4);
+                ctx.fillRect(x + w - (isBraking ? 18 : 16), y + h - 2, isBraking ? 14 : 10, 4);
                 ctx.shadowBlur = 0;
             } else {
                 const showHeadlights = mapType === 'city' || mapType === 'night' || mapType === 'jungle';
@@ -2726,8 +2726,11 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 });
             }
 
-            const playerY = H - (isMobile ? 180 : 220);
-            drawCar(s.carX, playerY, carW, carH, '#FF3366', true);
+            const basePlayerY = H - (isMobile ? 180 : 220);
+            const speedOffset = (s.speed - 5) * 6; // Softer slide back
+            const playerY = basePlayerY - speedOffset;
+            const isBraking = (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down' || s.btnDown);
+            drawCar(s.carX, playerY, carW, carH, '#FF3366', true, false, isBraking);
 
             if (screen !== "menu") {
                 s.enemies.forEach(e => {
@@ -2778,7 +2781,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                 if (s.keys['ArrowUp'] || s.keys['w'] || s.keys['W'] || s.touchDirection === 'up' || s.btnUp) {
                     s.targetSpeed = Math.min(s.targetSpeed + 0.15, 10); // Standard speed
                 } else if (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down' || s.btnDown) {
-                    s.targetSpeed = Math.max(s.targetSpeed - 0.25, 2);
+                    s.targetSpeed = Math.max(s.targetSpeed - 0.35, 2); // Smoother, balanced brake
                 } else {
                     if (s.targetSpeed > 5) {
                         s.targetSpeed = Math.max(s.targetSpeed - 0.1, 5);
@@ -2787,7 +2790,8 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     }
                 }
 
-                s.speed += (s.targetSpeed - s.speed) * 0.08;
+                const isBraking = (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S'] || s.touchDirection === 'down' || s.btnDown);
+                s.speed += (s.targetSpeed - s.speed) * (isBraking ? 0.20 : 0.08);
                 s.distance += s.speed;
                 s.roadOffset = (s.roadOffset + s.speed) % 70;
 
@@ -2836,22 +2840,31 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         enemyX = roadLeft + marker * laneWidth - (carW / 2);
                     }
 
-                    // Stricter spacing to ensure "sabhi car saath me nahi aani chahiye"
-                    const topEnemies = s.enemies.filter(e => e.y < 350);
+                    const baseEnemySpeed = 3.5;
+                    const spawnAtBottom = s.speed < baseEnemySpeed;
+
+                    const relevantEnemies = spawnAtBottom
+                        ? s.enemies.filter(e => e.y > H - 350 && e.y < H + 350)
+                        : s.enemies.filter(e => e.y > -350 && e.y < 350);
 
                     // logic: limit to 2 enemies at top to prevent impossible walls
-                    if (topEnemies.length < 2) {
-                        const overlapsHorizontally = topEnemies.some(e => Math.abs(e.x - enemyX) < (carW * 2.0));
-                        const laneOccupied = s.enemies.some(e => Math.abs(e.x - enemyX) < (carW * 1.5) && e.y < 450);
+                    if (relevantEnemies.length < 2) {
+                        const overlapsHorizontally = relevantEnemies.some(e => Math.abs(e.x - enemyX) < (carW * 2.0));
+                        const laneOccupied = s.enemies.some(e => Math.abs(e.x - enemyX) < (carW * 1.5) && (spawnAtBottom ? (e.y > H - 450) : (e.y < 450 && e.y > -350)));
 
-                        if (!overlapsHorizontally && !laneOccupied) {
-                            // Slower but consistent enemy speeds
-                            const baseEnemySpeed = 3 + Math.random() * 1.5;
+                        const playerLane = Math.floor((s.carX + carW / 2 - roadLeft) / laneWidth);
+                        const enemyLane = Math.floor((enemyX + carW / 2 - roadLeft) / laneWidth);
+                        const isRearEnding = spawnAtBottom && playerLane === enemyLane;
+
+                        if (!overlapsHorizontally && !laneOccupied && !isRearEnding) {
                             s.enemies.push({
-                                x: enemyX, y: -150, w: carW, h: carH,
+                                x: enemyX,
+                                y: spawnAtBottom ? H + 150 : -150,
+                                w: carW, h: carH,
                                 color: enemyColors[Math.floor(Math.random() * enemyColors.length)],
                                 passed: false, isOpposite: isOpp,
                                 speed: baseEnemySpeed,
+                                spawnedAtBottom: spawnAtBottom
                             });
                         }
                     }
@@ -2859,15 +2872,24 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
 
                 if (Math.random() < 0.015) {
                     const lane = Math.floor(Math.random() * 3);
-                    s.coins.push({
-                        x: roadLeft + lane * laneWidth + (laneWidth - 30) / 2,
-                        y: -50, w: 30, h: 30, rotation: 0,
-                    });
+                    const coinX = roadLeft + lane * laneWidth + (laneWidth - 30) / 2;
+
+                    const tooCloseToCoin = s.coins.some(c => Math.abs(c.x - coinX) < 10 && c.y < 150);
+                    const tooCloseToCar = s.enemies.some(e => Math.abs(e.x - coinX) < (carW * 1.5) && e.y < 250 && e.y > -150);
+
+                    if (!tooCloseToCoin && !tooCloseToCar) {
+                        s.coins.push({
+                            x: coinX,
+                            y: -50, w: 30, h: 30, rotation: 0,
+                        });
+                    }
                 }
 
                 s.coins.forEach(c => {
-                    c.y += s.speed + 2;
-                    const playerY = H - (isMobile ? 180 : 220);
+                    c.y += s.speed;
+                    const basePlayerY = H - (isMobile ? 180 : 220);
+                    const speedOffset = (s.speed - 5) * 6; // Softer slide back
+                    const playerY = basePlayerY - speedOffset;
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, c)) {
                         c.collected = true;
                         s.earnedCoins += 1;
@@ -2875,6 +2897,12 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         setEarnedCoins(s.earnedCoins);
                         setCoins(prev => prev + 1); // Real-time cumulative balance
                         playCoinSound();
+                    } else {
+                        // Destroy coin if it overlaps with an enemy car to prevent visual stacking
+                        const hitEnemy = s.enemies.some(e => hit({ x: e.x, y: e.y, w: e.w, h: e.h }, c));
+                        if (hitEnemy) {
+                            c.collected = true;
+                        }
                     }
                 });
                 s.coins = s.coins.filter(c => !c.collected && c.y < H + 100);
@@ -2884,16 +2912,17 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                     if (e.isOpposite) e.y += s.speed + e.speed;
                     else {
                         e.y += (s.speed - e.speed);
-                        if (e.y < -200) e.y = -200;
                     }
 
-                    if (!e.passed && e.y > H - 100) {
+                    if (!e.passed && !e.spawnedAtBottom && e.y > H - 100) {
                         e.passed = true;
                         s.score += 10;
                         setScore(s.score);
                     }
 
-                    const playerY = H - (isMobile ? 180 : 220);
+                    const basePlayerY = H - (isMobile ? 180 : 220);
+                    const speedOffset = (s.speed - 5) * 6; // Softer slide back
+                    const playerY = basePlayerY - speedOffset;
                     if (hit({ x: s.carX, y: playerY, w: carW, h: carH }, e)) {
                         setScore(s.score);
                         setEarnedCoins(s.earnedCoins);
@@ -2901,7 +2930,7 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                         return;
                     }
                 }
-                s.enemies = s.enemies.filter(e => e.y < H + 100);
+                s.enemies = s.enemies.filter(e => e.y < H + 250 && e.y > -2000);
 
                 if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A'] || s.touchDirection === 'left' || s.btnLeft) {
                     if (s.carX > roadLeft + 10) s.carX -= 5;
@@ -3305,9 +3334,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                         zIndex: 20
                                     }}>
                                         <button
-                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnLeft = true; }}
-                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
-                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
+                                            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnLeft = true; }}
+                                            onPointerUp={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
+                                            onPointerCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnLeft = false; }}
                                             style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
                                         >
                                             <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
@@ -3315,9 +3344,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                             </svg>
                                         </button>
                                         <button
-                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnRight = true; }}
-                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
-                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
+                                            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnRight = true; }}
+                                            onPointerUp={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
+                                            onPointerCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnRight = false; }}
                                             style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
                                         >
                                             <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
@@ -3338,9 +3367,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                         zIndex: 20
                                     }}>
                                         <button
-                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnDown = true; }}
-                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
-                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
+                                            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnDown = true; }}
+                                            onPointerUp={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
+                                            onPointerCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnDown = false; }}
                                             style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
                                         >
                                             <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
@@ -3356,9 +3385,9 @@ function Game({ onMapSelect, mapType, coins, setCoins, onHome, settings, onSetti
                                             </svg>
                                         </button>
                                         <button
-                                            onTouchStart={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnUp = true; }}
-                                            onTouchEnd={(e) => { e.preventDefault(); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
-                                            onTouchCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
+                                            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(0.85)'; e.currentTarget.style.background = 'rgba(255,215,0,0.3)'; stateRef.current.btnUp = true; }}
+                                            onPointerUp={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
+                                            onPointerCancel={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; stateRef.current.btnUp = false; }}
                                             style={{ background: 'rgba(0,0,0,0.5)', border: '2px solid rgba(255,215,0,0.8)', borderRadius: '50%', width: 'clamp(50px, 18vmin, 80px)', height: 'clamp(50px, 18vmin, 80px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, boxShadow: '0 0 10px rgba(255,215,0,0.3), inset 0 0 10px rgba(255,215,0,0.3)', transition: 'all 0.1s', outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
                                         >
                                             <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ pointerEvents: 'none' }}>
@@ -3760,5 +3789,4 @@ const Home = () => {
         </>
     );
 }
-
 export default Home;

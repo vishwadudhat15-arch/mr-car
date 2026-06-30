@@ -39,7 +39,7 @@ export default function MapSelection({ onSelectMap, coins, settings, onSettingsC
                 </div>
 
                 <div className="scrollable-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', padding: '40px 0' }}>
-                    <h1 style={{ fontSize: 'clamp(24px, 5vw, 60px)', textAlign: 'center', color: '#fff', fontWeight: '900', textTransform: 'uppercase', marginBottom: '40px' }}>{t.selectMap}</h1>
+                    <h1 style={{ fontSize: 'clamp(18px, 4vw, 40px)', textAlign: 'center', color: '#fff', fontWeight: '900', textTransform: 'uppercase', marginBottom: '40px' }}>{t.selectMap}</h1>
 
                     <div className="map-grid" style={{
                         display: 'grid', gap: '30px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',

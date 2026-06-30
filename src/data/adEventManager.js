@@ -20,7 +20,8 @@ export function logAnalyticsEvent(eventName, params = {}) {
     console.log(`%c[AD COUNTER] Total Plays: ${count} / 3`, 'font-size: 16px; color: #ff00ff; font-weight: bold; background: #222; padding: 4px 8px; border-radius: 4px;');
     
     if (count % 3 === 0) {
-      const isAdsEnabled = true;
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAdsEnabled = urlParams.get('ads') === 'true';
 
       if (!isAdsEnabled) {
         console.log('%c[Analytics] Ad trigger suppressed: Ads disabled by default (enable with ?ads=true)', 'color: #ff4a4a; font-weight: bold;');
